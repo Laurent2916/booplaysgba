@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.9"
 asyncio = "^3.4.3"
 websockets = "^10.0"
+mypy = "^0.910"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
@@ -28,9 +29,15 @@ include = '\.pyi?$'
 exclude = '''
 /(
   \.git
+  \.venv
 )/
 '''
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+
+[tool.mypy]
+python_version = 3.9
+warn_return_any = true
+warn_unused_configs = true
