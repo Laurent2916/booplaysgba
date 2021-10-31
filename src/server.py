@@ -93,18 +93,35 @@ async def handler(websocket, path):
                     user.last_message = time.time()
                     user.has_voted = True
                     logging.debug(f"key received: {action} ({VOTES[action]}), from {user}")
+                else:
+                    logging.error(f"unsupported action: {data}")
 
-                elif action == "get":
+            if "admin" in data:
+                admin = data["admin"]
+
+                print(admin)
+
+                if admin == "save":
+                    await EMULATOR.send('{"admin":"save"}')
+                elif admin == "load":
+                    await EMULATOR.send('{"admin":"load"}')
+                else:
+                    logging.error(f"unsupported admin: {admin}")
+
+            if "emu" in data:
+                emu: str = data["emu"]
+
+                if emu == "get":
                     if EMULATOR and websocket == EMULATOR:
                         move = next_move()
-                        await websocket.send(move)
+                        await EMULATOR.send(f'{{"action":"{move}"}}')
                         logging.info(f"vote sent: {move}")
                         clear_votes()
                     else:
                         logging.error(f"user is not EMULATOR: {user}")
-
                 else:
-                    logging.error(f"unsupported action: {data}")
+                    logging.error(f"unsupported emu: {data}")
+
     finally:
         # Unregister user
         user.unregister()

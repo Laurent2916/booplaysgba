@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 import mgba.core
@@ -7,6 +8,7 @@ import mgba.log
 import numpy as np
 import pyvirtualcam
 import websockets
+from mgba._pylib import ffi
 
 WIDTH = 240
 HEIGHT = 160
@@ -39,22 +41,40 @@ async def main():
         async with websockets.connect(URI) as websocket:
             await websocket.send('{"auth":"password"}')
             logging.debug(f"connected to: {websocket}")
-            test = core.save_raw_state()
 
             while True:
 
-                if core.frame_counter % 30 == 0:
-                    await websocket.send('{"action":"get"}')
-                    response = await websocket.recv()
-                    if response in KEYMAP:
-                        key = KEYMAP[response]
-                        core.set_keys(key)
-                        logging.debug(f"pressing: {key}")
+                if core.frame_counter % 30 == 0:  # 2Hz
+                    await websocket.send('{"emu":"get"}')
+                    message = await websocket.recv()
+                    data = json.loads(message)
 
-                        # with open("pokemon.state", "w") as f:
-                        #     f.write(test)
-                        core.load_raw_state(test)
-                        print(str(test))
+                    if "action" in data:
+                        action = data["action"]
+                        if action in KEYMAP:
+                            key = KEYMAP[action]
+                            core.set_keys(key)
+                            logging.debug(f"pressing: {key}")
+                        else:
+                            logging.error(f"unsupported action: {data}")
+
+                    if "admin" in data:
+                        admin = data["admin"]
+                        if admin == "save":
+                            state = core.save_raw_state()
+                            with open("states/test.state", "wb") as state_file:
+                                for byte in state:
+                                    state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
+                        elif admin == "load":
+                            state = ffi.new("unsigned char[397312]")
+                            with open("states/test.state", "rb") as state_file:
+                                for i in range(len(state)):
+                                    ptdr = state_file.read(4)
+                                    state[i] = int.from_bytes(ptdr, byteorder="big", signed=False)
+                            core.load_raw_state(state)
+
+                        else:
+                            logging.error(f"unsupported admin: {data}")
 
                 core.run_frame()
                 core.clear_keys(*KEYMAP.values())
