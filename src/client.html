@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Telecommande</title>
+</head>
+
+<body>
+    <button id="a">a</button>
+    <button id="b">b</button>
+    <button id="select">select</button>
+    <button id="start">start</button>
+    <button id="right">right</button>
+    <button id="left">left</button>
+    <button id="up">up</button>
+    <button id="down">down</button>
+    <button id="r">r</button>
+    <button id="l">l</button>
+
+    <script>
+        var websocket = new WebSocket("ws://127.0.0.1:6789/");
+
+        var a = document.getElementById('a'),
+            b = document.getElementById('b'),
+            select = document.getElementById('select'),
+            start = document.getElementById('start'),
+            right = document.getElementById('right'),
+            left = document.getElementById('left'),
+            up = document.getElementById('up'),
+            down = document.getElementById('down'),
+            r = document.getElementById('r'),
+            l = document.getElementById('l');
+
+        a.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'a' }));
+        }
+        b.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'b' }));
+        }
+        select.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'select' }));
+        }
+        start.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'start' }));
+        }
+        right.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'right' }));
+        }
+        left.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'left' }));
+        }
+        up.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'up' }));
+        }
+        down.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'down' }));
+        }
+        r.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'r' }));
+        }
+        l.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'l' }));
+        }
+    </script>
+</body>
+
+</html>
