@@ -55,6 +55,8 @@ async def main():
                             key = KEYMAP[action]
                             core.set_keys(key)
                             logging.debug(f"pressing: {key}")
+                        elif action == "null":
+                            pass
                         else:
                             logging.error(f"unsupported action: {data}")
 

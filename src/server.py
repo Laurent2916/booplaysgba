@@ -55,7 +55,6 @@ def clear_votes():
         VOTES[key] = 0
     for user in USERS:
         user.has_voted = False
-    logging.info(f"votes cleared: {VOTES}")
 
 
 def next_move():
@@ -92,15 +91,11 @@ async def handler(websocket, path):
                     VOTES[action] += 1
                     user.last_message = time.time()
                     user.has_voted = True
-                    logging.debug(f"key received: {action} ({VOTES[action]}), from {user}")
                 else:
                     logging.error(f"unsupported action: {data}")
 
             if "admin" in data:
                 admin = data["admin"]
-
-                print(admin)
-
                 if admin == "save":
                     await EMULATOR.send('{"admin":"save"}')
                 elif admin == "load":
@@ -115,7 +110,6 @@ async def handler(websocket, path):
                     if EMULATOR and websocket == EMULATOR:
                         move = next_move()
                         await EMULATOR.send(f'{{"action":"{move}"}}')
-                        logging.info(f"vote sent: {move}")
                         clear_votes()
                     else:
                         logging.error(f"user is not EMULATOR: {user}")
