@@ -34,3 +34,8 @@ flake8:
   stage: lint
   script:
     - pre-commit run flake8 --all-files
+
+bandit:
+  stage: lint
+  script:
+    - pre-commit run bandit --all-files
