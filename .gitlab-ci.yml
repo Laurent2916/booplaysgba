@@ -1,6 +1,12 @@
 stages:
   - lint
 
+image: python:latest
+
+before_script:
+  - pip install pre-commit
+  - pre-commit install
+
 flake8:
   stage: lint
   script:
