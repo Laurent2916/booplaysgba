@@ -3,19 +3,80 @@
 
 <head>
     <title>Telecommande</title>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        table {
+            margin: auto;
+            margin-top: 30vh;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        #a,
+        #b {
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        #left,
+        #right,
+        #up,
+        #down {
+            border-radius: 10%;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        #start,
+        #select,
+        #l,
+        #r {
+            border-radius: 25%;
+            width: 3.5rem;
+        }
+    </style>
+
 </head>
 
 <body>
-    <button id="a">a</button>
-    <button id="b">b</button>
-    <button id="select">select</button>
-    <button id="start">start</button>
-    <button id="right">right</button>
-    <button id="left">left</button>
-    <button id="up">up</button>
-    <button id="down">down</button>
-    <button id="r">r</button>
-    <button id="l">l</button>
+    <table class="buttons">
+        <tr>
+            <td colspan="2" style="padding-bottom: 1rem;"><button id="l">L</button></td>
+            <td></td>
+            <td colspan="2" style="padding-bottom: 1rem; text-align: right;"><button id="r">R</button></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button id="up"> ∧ </button></td>
+            <td></td>
+            <td><button id="select">select</button></td>
+            <td><button id="start">start</button></td>
+        </tr>
+        <tr>
+            <td><button id="left">
+                    < </button>
+            </td>
+            <td></td>
+            <td style="padding-right: 3rem;"><button id="right"> > </button></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button id="down"> ∨ </button></td>
+            <td></td>
+            <td><button id="a">A</button></td>
+            <td><button id="b">B</button></td>
+        </tr>
+    </table>
 
     <script>
         var websocket = new WebSocket("ws://127.0.0.1:6789/");
