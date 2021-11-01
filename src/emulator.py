@@ -13,6 +13,8 @@ from mgba._pylib import ffi
 WIDTH = 240
 HEIGHT = 160
 URI: str = "ws://127.0.0.1:6789/"
+FPS: int = 60
+HZ: int = FPS // 10
 KEYMAP: dict[str, int] = {
     "a": 0,
     "b": 1,
@@ -36,7 +38,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 async def main():
-    with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=60) as cam:
+    with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
         logging.debug(f"Using virtual camera: {cam.device}")
         async with websockets.connect(URI) as websocket:
             await websocket.send('{"auth":"password"}')
@@ -44,7 +46,7 @@ async def main():
 
             while True:
 
-                if core.frame_counter % 6 == 0:  # 10Hz
+                if not (core.frame_counter % HZ):
                     await websocket.send('{"emu":"get"}')
                     message = await websocket.recv()
                     data = json.loads(message)
