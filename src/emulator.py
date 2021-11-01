@@ -44,7 +44,7 @@ async def main():
 
             while True:
 
-                if core.frame_counter % 30 == 0:  # 2Hz
+                if core.frame_counter % 6 == 0:  # 10Hz
                     await websocket.send('{"emu":"get"}')
                     message = await websocket.recv()
                     data = json.loads(message)
