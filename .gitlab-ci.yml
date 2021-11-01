@@ -1,0 +1,7 @@
+stages:
+  - lint
+
+flake8:
+  stage: lint
+  script:
+    - pre-commit run flake8 --all-files
