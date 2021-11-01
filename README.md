@@ -54,6 +54,12 @@ To run locally the emulator :
 python3 src/emulator.py
 ```
 
+To access the remote controller :
+
+```bash
+firefox src/client.py
+```
+
 ## Contributing
 
 This repository is under the [Contributing Covenant](https://www.contributor-covenant.org/) code of conduct.
