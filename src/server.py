@@ -3,7 +3,7 @@ import json
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 import websockets
 
@@ -46,8 +46,8 @@ class User:
 class Users(set):
     """Store `User`s connected to the server."""
 
-    emulator: User = User(None)
-    admin: User = User(None)
+    emulator: Optional[User] = None
+    admin: Optional[User] = None
 
     def register(self, user: User):
         """Register a user in the set.
@@ -110,7 +110,8 @@ class Votes(dict):
 
 logging.basicConfig(level=logging.DEBUG)
 
-PASSWORD: str = "password"
+PASSWORD_ADMIN: str = "password"
+PASSWORD_EMU: str = "password"
 VOTES: Votes = Votes()
 USERS: Users = Users()
 
@@ -120,16 +121,16 @@ async def parse_message(user: User, msg: dict[str, str]):
 
     Args:
         user (User): the sender of the message.
-        msg (dict[str, str]): the message received through websocket.
+        msg (dict[str, str]): the data received (through the websocket).
     """
     if "auth" in msg:
         data = msg["auth"]
-        if data == PASSWORD:
+        if USERS.emulator is not None and data == PASSWORD_EMU:
             USERS.emulator = user
             logging.debug(f"emulator authenticated: {user}")
-        # elif not USERS.admin and data == PASSWORD:
-        #     USERS.admin = user
-        #     logging.debug(f"admin authenticated: {user}")
+        elif USERS.admin is not None and data == PASSWORD_ADMIN:
+            USERS.admin = user
+            logging.debug(f"admin authenticated: {user}")
 
     if "action" in msg:
         data = msg["action"]
@@ -142,7 +143,7 @@ async def parse_message(user: User, msg: dict[str, str]):
 
     if "admin" in msg:
         data = msg["admin"]
-        if user == USERS.admin:
+        if USERS.emulator is not None and user == USERS.admin:
             if data == "save":
                 await USERS.emulator.send('{"admin":"save"}')
             elif data == "load":
