@@ -1,41 +1,11 @@
 stages:
   - lint
 
-image: python:latest
-
-before_script:
-  - pip install pre-commit
-  - pre-commit install
-
-basic hooks:
+pre-commit:
   stage: lint
+  image: python:latest
+  before_script:
+    - pip install pre-commit
+    - pre-commit install
   script:
-    - pre-commit run trailing-whitespace --all-files
-    - pre-commit run end-of-file-fixer --all-files
-    - pre-commit run check-yaml --all-files
-    - pre-commit run check-added-large-files --all-files
-
-mypy:
-  stage: lint
-  script:
-    - pre-commit run mypy --all-files
-
-isort:
-  stage: lint
-  script:
-    - pre-commit run isort --all-files
-
-black:
-  stage: lint
-  script:
-    - pre-commit run black --all-files
-
-flake8:
-  stage: lint
-  script:
-    - pre-commit run flake8 --all-files
-
-bandit:
-  stage: lint
-  script:
-    - pre-commit run bandit --all-files
+    - pre-commit run --all-files
