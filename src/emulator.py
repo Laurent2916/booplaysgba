@@ -39,7 +39,12 @@ mgba.log.silence()
 logging.basicConfig(level=logging.DEBUG)
 
 
-async def parse_message(message: dict[str, str]):
+def parse_message(message: dict[str, str]):
+    """Parse the server's reponse.
+
+    Args:
+        message (dict[str, str]): the data received (through the websocket).
+    """
     if "action" in message:
         data = message["action"]
         if data in KEYMAP:
@@ -69,6 +74,7 @@ async def parse_message(message: dict[str, str]):
 
 
 async def main():
+    """Start the emulator."""
     with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
         logging.debug(f"Using virtual camera: {cam.device}")
         async with websockets.connect(URI) as websocket:

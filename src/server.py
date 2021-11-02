@@ -16,15 +16,15 @@ VOTES: Votes = Votes()
 USERS: Users = Users()
 
 
-async def parse_message(user: User, msg: dict[str, str]):
-    """Parse the `user`'s `msg`.
+async def parse_message(user: User, message: dict[str, str]):
+    """Parse the user's message.
 
     Args:
         user (User): the sender of the message.
-        msg (dict[str, str]): the data received (through the websocket).
+        message (dict[str, str]): the data received (through the websocket).
     """
-    if "auth" in msg:
-        data = msg["auth"]
+    if "auth" in message:
+        data = message["auth"]
         if USERS.emulator is None and data == PASSWORD_EMU:
             USERS.emulator = user
             logging.debug(f"emulator authenticated: {user}")
@@ -32,8 +32,8 @@ async def parse_message(user: User, msg: dict[str, str]):
             USERS.admin = user
             logging.debug(f"admin authenticated: {user}")
 
-    if "action" in msg:
-        data = msg["action"]
+    if "action" in message:
+        data = message["action"]
         if data in VOTES:
             VOTES[data] += 1
             user.last_message = time.time()
@@ -41,8 +41,8 @@ async def parse_message(user: User, msg: dict[str, str]):
         else:
             logging.error(f"unsupported action: {data}")
 
-    if "admin" in msg:
-        data = msg["admin"]
+    if "admin" in message:
+        data = message["admin"]
         if USERS.emulator is not None and user == USERS.admin:
             if data == "save":
                 await USERS.emulator.send('{"admin":"save"}')
@@ -53,8 +53,8 @@ async def parse_message(user: User, msg: dict[str, str]):
         else:
             logging.error(f"user is not admin: {user}")
 
-    if "emu" in msg:
-        data = msg["emu"]
+    if "emu" in message:
+        data = message["emu"]
         if user == USERS.emulator:
             if data == "get":
                 await USERS.emulator.send(f'{{"action":"{VOTES.next_vote()}"}}')
