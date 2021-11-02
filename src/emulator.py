@@ -14,7 +14,8 @@ WIDTH = 240
 HEIGHT = 160
 URI: str = "ws://127.0.0.1:6789/"
 FPS: int = 60
-HZ: int = FPS // 10
+HZ: int = 10
+POLLING_RATE: int = FPS // HZ
 KEYMAP: dict[str, int] = {
     "a": 0,
     "b": 1,
@@ -45,7 +46,7 @@ async def main():
             await websocket.send('{"auth":"password"}')
             logging.debug(f"connected to: {websocket}")
             while True:
-                if not (core.frame_counter % HZ):
+                if not (core.frame_counter % POLLING_RATE):
 
                     core.clear_keys(*KEYMAP.values())
                     await websocket.send('{"emu":"get"}')
