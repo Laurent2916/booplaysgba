@@ -2,3 +2,4 @@ roms/
 .venv/
 .mypy_cache/
 states/
+__pycache__/
