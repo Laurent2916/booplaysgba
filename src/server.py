@@ -25,10 +25,10 @@ async def parse_message(user: User, msg: dict[str, str]):
     """
     if "auth" in msg:
         data = msg["auth"]
-        if USERS.emulator is not None and data == PASSWORD_EMU:
+        if USERS.emulator is None and data == PASSWORD_EMU:
             USERS.emulator = user
             logging.debug(f"emulator authenticated: {user}")
-        elif USERS.admin is not None and data == PASSWORD_ADMIN:
+        elif USERS.admin is None and data == PASSWORD_ADMIN:
             USERS.admin = user
             logging.debug(f"admin authenticated: {user}")
 
