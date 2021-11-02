@@ -6,6 +6,7 @@
 - [VS Code](https://code.visualstudio.com/)
 - [Websockets](https://websockets.readthedocs.io/)
 - [mGBA](https://mgba.io/)
+- [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
 
 ## Getting started
 
