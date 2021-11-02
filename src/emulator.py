@@ -29,6 +29,7 @@ KEYMAP: dict[str, int] = {
 }
 
 core = mgba.core.load_path("roms/pokemon.gba")
+# core = mgba.core.load_path("roms/BtnTest.gba")
 screen = mgba.image.Image(WIDTH, HEIGHT)
 core.set_video_buffer(screen)
 core.reset()
@@ -43,10 +44,10 @@ async def main():
         async with websockets.connect(URI) as websocket:
             await websocket.send('{"auth":"password"}')
             logging.debug(f"connected to: {websocket}")
-
             while True:
-
                 if not (core.frame_counter % HZ):
+
+                    core.clear_keys(*KEYMAP.values())
                     await websocket.send('{"emu":"get"}')
                     message = await websocket.recv()
                     data = json.loads(message)
@@ -81,7 +82,6 @@ async def main():
                             logging.error(f"unsupported admin: {data}")
 
                 core.run_frame()
-                core.clear_keys(*KEYMAP.values())
 
                 frame = np.array(screen.to_pil().convert("RGB"), np.uint8)
                 cam.send(frame)
