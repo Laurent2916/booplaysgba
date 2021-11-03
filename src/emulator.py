@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import time
 
 import mgba.core
 import mgba.image
@@ -10,8 +11,8 @@ import pyvirtualcam
 import websockets
 from mgba._pylib import ffi
 
-WIDTH = 240
-HEIGHT = 160
+WIDTH: int = 240
+HEIGHT: int = 160
 URI: str = "ws://127.0.0.1:6789/"
 FPS: int = 60
 HZ: int = 10
@@ -36,7 +37,7 @@ core.set_video_buffer(screen)
 core.reset()
 mgba.log.silence()
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 
 def parse_message(message: dict[str, str]):
@@ -60,7 +61,7 @@ def parse_message(message: dict[str, str]):
         data = message["admin"]
         if data == "save":  # voodoo magic incomming
             state = core.save_raw_state()
-            with open("states/test.state", "wb") as state_file:
+            with open(f"states/{time.strftime('%Y-%m-%dT%H:%M:%S')}.state", "wb") as state_file:
                 for byte in state:
                     state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
         elif data == "load":  # black magic incomming
@@ -78,7 +79,7 @@ async def main():
     with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
         logging.debug(f"Using virtual camera: {cam.device}")
         async with websockets.connect(URI) as websocket:
-            await websocket.send('{"auth":"password"}')
+            await websocket.send('{"auth":"emulator_password"}')
             logging.debug(f"connected to: {websocket}")
 
             while True:

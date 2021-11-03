@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import os
 import time
 from typing import Any
 
@@ -8,15 +9,22 @@ import websockets
 
 from utils import User, Users, Votes
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
-PASSWORD_ADMIN: str = "password"
-PASSWORD_EMU: str = "password"
+PASSWORD_ADMIN: str = "admin_password"
+PASSWORD_EMU: str = "emulator_password"
 VOTES: Votes = Votes()
 USERS: Users = Users()
 
 
-async def parse_message(user: User, message: dict[str, str]):
+async def send_states(user: User) -> None:
+    files = os.listdir("states")
+    states = list(filter(lambda x: x.endswith(".state"), files))
+    message = json.dumps({"state": states})
+    await user.send(message)
+
+
+async def parse_message(user: User, message: dict[str, str]) -> None:
     """Parse the user's message.
 
     Args:
@@ -25,12 +33,14 @@ async def parse_message(user: User, message: dict[str, str]):
     """
     if "auth" in message:
         data = message["auth"]
-        if USERS.emulator is None and data == PASSWORD_EMU:
+        if USERS.emulator is None and data == PASSWORD_EMU and user != USERS.admin:
             USERS.emulator = user
             logging.debug(f"emulator authenticated: {user}")
-        elif USERS.admin is None and data == PASSWORD_ADMIN:
+            await user.send('{"auth":"success"}')
+        elif USERS.admin is None and data == PASSWORD_ADMIN and user != USERS.emulator:
             USERS.admin = user
             logging.debug(f"admin authenticated: {user}")
+            await user.send('{"auth":"success"}')
 
     if "action" in message:
         data = message["action"]
@@ -65,6 +75,16 @@ async def parse_message(user: User, message: dict[str, str]):
         else:
             logging.error(f"user is not emulator: {user}")
 
+    if "state" in message:
+        data = message["state"]
+        if user == USERS.admin:
+            if data == "get":
+                await send_states(user)
+            else:
+                logging.error(f"unsupported state action: {data}")
+        else:
+            logging.error(f"user is not admin: {user}")
+
 
 async def handler(websocket: Any, path: str):
     """Handle the messages sent by a user.
@@ -84,6 +104,12 @@ async def handler(websocket: Any, path: str):
     finally:
         # Unregister user
         USERS.unregister(user)
+        if user == USERS.admin:
+            USERS.admin = None
+            logging.debug(f"admin disconnected: {user}")
+        elif user == USERS.emulator:
+            logging.debug(f"emulator disconnected: {user}")
+            USERS.emulator = None
 
 
 async def main():
