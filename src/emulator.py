@@ -1,15 +1,11 @@
-import asyncio
-import json
 import logging
-import time
 
 import mgba.core
 import mgba.image
 import mgba.log
 import numpy as np
 import pyvirtualcam
-import websockets
-from mgba._pylib import ffi
+import redis
 
 WIDTH: int = 240
 HEIGHT: int = 160
@@ -17,6 +13,18 @@ URI: str = "ws://127.0.0.1:6789/"
 FPS: int = 60
 HZ: int = 10
 POLLING_RATE: int = FPS // HZ
+VOTES: dict[str, int] = {
+    "a": 0,
+    "b": 0,
+    "select": 0,
+    "start": 0,
+    "right": 0,
+    "left": 0,
+    "up": 0,
+    "down": 0,
+    "r": 0,
+    "l": 0,
+}
 KEYMAP: dict[str, int] = {
     "a": 0,
     "b": 1,
@@ -35,66 +43,40 @@ core = mgba.core.load_path("roms/pokemon.gba")
 screen = mgba.image.Image(WIDTH, HEIGHT)
 core.set_video_buffer(screen)
 core.reset()
+
+logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
+r = redis.Redis(host="localhost", port=6379, db=0)
 
-# logging.basicConfig(level=logging.DEBUG)
 
+def next_action():
+    """Select the next key from the redis database.
 
-def parse_message(message: dict[str, str]):
-    """Parse the server's reponse.
-
-    Args:
-        message (dict[str, str]): the data received (through the websocket).
+    Returns:
+        int: key used by mgba
     """
-    if "action" in message:
-        data = message["action"]
-        if data in KEYMAP:
-            key = KEYMAP[data]
-            core.set_keys(key)
-            logging.debug(f"pressing: {key}")
-        elif data == "null":
-            pass
-        else:
-            logging.error(f"unsupported action: {data}")
+    for key in VOTES.keys():
+        VOTES[key] = int(r.get(key))
+        r.set(key, 0)
 
-    if "admin" in message:
-        data = message["admin"]
-        if data == "save":  # voodoo magic incomming
-            state = core.save_raw_state()
-            with open(f"states/{time.strftime('%Y-%m-%dT%H:%M:%S')}.state", "wb") as state_file:
-                for byte in state:
-                    state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
-        elif data == "load":  # black magic incomming
-            state = ffi.new("unsigned char[397312]")
-            with open("states/test.state", "rb") as state_file:
-                for i in range(len(state)):
-                    state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
-            core.load_raw_state(state)
-        else:
-            logging.error(f"unsupported admin: {data}")
+    if any(VOTES.values()):
+        return KEYMAP[max(VOTES, key=VOTES.get)]
+    else:
+        return -1
 
 
-async def main():
-    """Start the emulator."""
-    with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
-        logging.debug(f"Using virtual camera: {cam.device}")
-        async with websockets.connect(URI) as websocket:
-            await websocket.send('{"auth":"emulator_password"}')
-            logging.debug(f"connected to: {websocket}")
+with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
+    logging.debug(f"Using virtual camera: {cam.device}")
 
-            while True:
-                if not (core.frame_counter % POLLING_RATE):
-                    core.clear_keys(*KEYMAP.values())
-                    await websocket.send('{"emu":"get"}')
-                    json_message = await websocket.recv()
-                    message = json.loads(json_message)
-                    parse_message(message)
+    while True:
+        if not (core.frame_counter % POLLING_RATE):
+            core.clear_keys(*KEYMAP.values())
+            next_key = next_action()
+            if next_key != -1:
+                core.set_keys(next_key)
 
-                core.run_frame()
+        core.run_frame()
 
-                frame = np.array(screen.to_pil().convert("RGB"), np.uint8)
-                cam.send(frame)
-                cam.sleep_until_next_frame()
-
-
-asyncio.run(main())
+        frame = np.array(screen.to_pil().convert("RGB"), np.uint8)
+        cam.send(frame)
+        cam.sleep_until_next_frame()
