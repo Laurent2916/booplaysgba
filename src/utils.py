@@ -67,38 +67,3 @@ class Users(set):
         """Clear the `has_voted` of each user in the set."""
         for user in self:
             user.has_voted = False
-
-
-@dataclass
-class Votes(dict):
-    """Store the votes sent by users."""
-
-    def __init__(self) -> None:
-        """Construct a `Votes` object."""
-        super(Votes, self)
-        self["a"] = 0
-        self["b"] = 0
-        self["select"] = 0
-        self["start"] = 0
-        self["right"] = 0
-        self["left"] = 0
-        self["up"] = 0
-        self["down"] = 0
-        self["r"] = 0
-        self["l"] = 0
-
-    def clear(self) -> None:
-        """Clear the `VOTES` dict."""
-        for key in self.keys():
-            self[key] = 0
-
-    def next_vote(self):
-        """Return the most voted action in the last frame.
-
-        Returns:
-            str: the most voted action.
-        """
-        if any(self.values()):
-            return max(self, key=self.get)
-        else:
-            return "null"

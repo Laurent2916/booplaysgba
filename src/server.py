@@ -6,28 +6,15 @@ import time
 import redis
 import websockets
 
+from settings import KEYS, PASSWORD_ADMIN, REDIS_INIT, USER_TIMEOUT
 from utils import User, Users
-
-PASSWORD_ADMIN: str = "password_admin"
-USERS: Users = Users()
-KEYMAP: tuple = (
-    "a",
-    "b",
-    "select",
-    "start",
-    "right",
-    "left",
-    "up",
-    "down",
-    "r",
-    "l",
-)
-REDIS_INIT: dict = dict([(x, 0) for x in KEYMAP])
 
 logging.basicConfig(level=logging.DEBUG)
 
 r = redis.Redis(host="localhost", port=6379, db=0)
 r.mset(REDIS_INIT)
+
+USERS: Users = Users()
 
 
 async def parse_message(user: User, message: dict[str, str]) -> None:
@@ -47,10 +34,10 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
     if "action" in message:
         data = message["action"]
 
-        if user.last_message + 1.0 > time.time():
+        if user.last_message + USER_TIMEOUT > time.time():
             logging.debug(f"dropping action: {data}")
             return None
-        elif data in KEYMAP:
+        elif data in KEYS:
             r.incr(data)
             user.last_message = time.time()
             user.has_voted = True

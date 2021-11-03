@@ -3,3 +3,4 @@ roms/
 .mypy_cache/
 states/
 __pycache__/
+*.rdb

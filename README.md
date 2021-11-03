@@ -7,6 +7,7 @@
 - [Websockets](https://websockets.readthedocs.io/)
 - [mGBA](https://mgba.io/)
 - [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
+- [Redis](https://redis.io/)
 
 ## Getting started
 
