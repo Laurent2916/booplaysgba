@@ -1,27 +1,33 @@
 import asyncio
 import json
 import logging
-import os
 import time
-from typing import Any
 
+import redis
 import websockets
 
-from utils import User, Users, Votes
+from utils import User, Users
 
-# logging.basicConfig(level=logging.DEBUG)
-
-PASSWORD_ADMIN: str = "admin_password"
-PASSWORD_EMU: str = "emulator_password"
-VOTES: Votes = Votes()
+PASSWORD_ADMIN: str = "password_admin"
 USERS: Users = Users()
+KEYMAP: tuple = (
+    "a",
+    "b",
+    "select",
+    "start",
+    "right",
+    "left",
+    "up",
+    "down",
+    "r",
+    "l",
+)
+REDIS_INIT: dict = dict([(x, 0) for x in KEYMAP])
 
+logging.basicConfig(level=logging.DEBUG)
 
-async def send_states(user: User) -> None:
-    files = os.listdir("states")
-    states = list(filter(lambda x: x.endswith(".state"), files))
-    message = json.dumps({"state": states})
-    await user.send(message)
+r = redis.Redis(host="localhost", port=6379, db=0)
+r.mset(REDIS_INIT)
 
 
 async def parse_message(user: User, message: dict[str, str]) -> None:
@@ -33,64 +39,30 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
     """
     if "auth" in message:
         data = message["auth"]
-        if USERS.emulator is None and data == PASSWORD_EMU and user != USERS.admin:
-            USERS.emulator = user
-            logging.debug(f"emulator authenticated: {user}")
-            await user.send('{"auth":"success"}')
-        elif USERS.admin is None and data == PASSWORD_ADMIN and user != USERS.emulator:
+        if USERS.admin is None and data == PASSWORD_ADMIN:
             USERS.admin = user
             logging.debug(f"admin authenticated: {user}")
             await user.send('{"auth":"success"}')
 
     if "action" in message:
         data = message["action"]
-        if data in VOTES:
-            VOTES[data] += 1
+
+        if user.last_message + 1.0 > time.time():
+            logging.debug(f"dropping action: {data}")
+            return None
+        elif data in KEYMAP:
+            r.incr(data)
             user.last_message = time.time()
             user.has_voted = True
         else:
             logging.error(f"unsupported action: {data}")
 
-    if "admin" in message:
-        data = message["admin"]
-        if USERS.emulator is not None and user == USERS.admin:
-            if data == "save":
-                await USERS.emulator.send('{"admin":"save"}')
-            elif data == "load":
-                await USERS.emulator.send('{"admin":"load"}')
-            else:
-                logging.error(f"unsupported admin action: {data}")
-        else:
-            logging.error(f"user is not admin: {user}")
 
-    if "emu" in message:
-        data = message["emu"]
-        if user == USERS.emulator:
-            if data == "get":
-                await USERS.emulator.send(f'{{"action":"{VOTES.next_vote()}"}}')
-                VOTES.clear()
-                USERS.clear()
-            else:
-                logging.error(f"unsupported emulator action: {data}")
-        else:
-            logging.error(f"user is not emulator: {user}")
-
-    if "state" in message:
-        data = message["state"]
-        if user == USERS.admin:
-            if data == "get":
-                await send_states(user)
-            else:
-                logging.error(f"unsupported state action: {data}")
-        else:
-            logging.error(f"user is not admin: {user}")
-
-
-async def handler(websocket: Any, path: str):
+async def handler(websocket, path: str):
     """Handle the messages sent by a user.
 
     Args:
-        websocket (Any): the websocket used by the user.
+        websocket: the websocket used by the user.
         path (str): the path used by the websocket. (?)
     """
     try:
@@ -104,12 +76,6 @@ async def handler(websocket: Any, path: str):
     finally:
         # Unregister user
         USERS.unregister(user)
-        if user == USERS.admin:
-            USERS.admin = None
-            logging.debug(f"admin disconnected: {user}")
-        elif user == USERS.emulator:
-            logging.debug(f"emulator disconnected: {user}")
-            USERS.emulator = None
 
 
 async def main():

@@ -16,15 +16,17 @@ pyvirtualcam = "^0.8.0"
 cffi = "^1.15.0"
 cached-property = "^1.5.2"
 Pillow = "^8.4.0"
-flake8-docstrings = "^1.6.0"
+redis = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
 flake8 = "^4.0.1"
+flake8-docstrings = "^1.6.0"
 pre-commit = "^2.15.0"
 bandit = "^1.7.0"
 isort = "^5.9.3"
 mypy = "^0.910"
+types-redis = "^3.5.15"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
