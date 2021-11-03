@@ -1,4 +1,5 @@
 import logging
+from subprocess import PIPE, Popen
 
 import mgba.core
 import mgba.image
@@ -34,6 +35,29 @@ def next_action():
         return -1
 
 
+stream = Popen(
+    [
+        "/usr/bin/ffmpeg",
+        "-y",
+        "-f",
+        "image2pipe",
+        "-vcodec",
+        "png",
+        "-r",
+        f"{FPS}",
+        "-s",
+        f"{WIDTH}x{HEIGHT}",
+        "-i",
+        "-",
+        "-f",
+        "flv",
+        "-b:v",
+        "2M",
+        "rtmp://localhost:1935/live/test",
+    ],
+    stdin=PIPE,
+)
+
 with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
     logging.debug(f"Using virtual camera: {cam.device}")
 
@@ -46,6 +70,8 @@ with pyvirtualcam.Camera(width=WIDTH, height=HEIGHT, fps=FPS) as cam:
 
         core.run_frame()
 
-        frame = np.array(screen.to_pil().convert("RGB"), np.uint8)
-        cam.send(frame)
+        image = screen.to_pil().convert("RGB")
+        image.save(stream.stdin, "PNG")
+
+        cam.send(np.array(image, np.uint8))
         cam.sleep_until_next_frame()
