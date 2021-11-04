@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "booplaysgba"
 version = "0.1.0"
-description = "Émulateur collaboratif et interactif pour patienter dans le B00"
+description = "Émulateur collaboratif pour patienter dans le B00"
 authors = ["Laureηt <laurentfainsin@protonmail.com>"]
 license = "MIT"
 packages = [

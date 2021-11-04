@@ -8,6 +8,7 @@
 - [mGBA](https://mgba.io/)
 - [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
 - [Redis](https://redis.io/)
+- [Nginx-RTMP](https://hub.docker.com/r/tiangolo/nginx-rtmp/)
 
 ## Getting started
 
