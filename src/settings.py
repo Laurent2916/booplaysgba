@@ -5,6 +5,7 @@ URI: str = "ws://127.0.0.1:6789/"
 PASSWORD_ADMIN: str = "password_admin"
 
 FPS: int = 60
+SPF: float = 1.0 / FPS
 HZ: int = 10
 POLLING_RATE: int = FPS // HZ
 USER_TIMEOUT: float = 0.5
