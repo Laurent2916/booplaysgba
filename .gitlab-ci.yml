@@ -5,7 +5,7 @@ pre-commit:
   stage: lint
   image: python:latest
   before_script:
-    - pip install pre-commit types-redis
+    - pip install pre-commit
     - pre-commit install
   script:
     - pre-commit run --all-files
