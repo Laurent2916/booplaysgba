@@ -2,13 +2,13 @@
 
 ## Built with
 
-- [Python](https://editorconfig.org/)
+- [Python](https://www.python.org/)
+- [mGBA](https://mgba.io/)
 - [VS Code](https://code.visualstudio.com/)
 - [Websockets](https://websockets.readthedocs.io/)
-- [mGBA](https://mgba.io/)
-- [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
 - [Redis](https://redis.io/)
 - [Nginx-RTMP](https://hub.docker.com/r/tiangolo/nginx-rtmp/)
+- [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
 
 ## Getting started
 
@@ -18,6 +18,8 @@
 It is recommended to use [VS Code](https://code.visualstudio.com/) with these extensions :
 
 - [ms-python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
+- [Python Docstring Generator](https://marketplace.visualstudio.com/items?itemName=njpwerner.autodocstring)
 
 ### Installation
 
