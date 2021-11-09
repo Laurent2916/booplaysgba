@@ -4,9 +4,7 @@ version = "0.1.0"
 description = "Émulateur collaboratif pour patienter dans le B00"
 authors = ["Laureηt <laurentfainsin@protonmail.com>"]
 license = "MIT"
-packages = [
-    { include = "mgba", from = "mgba/build/python/lib.linux-x86_64-3.9" }
-]
+
 [tool.poetry.dependencies]
 python = "^3.9"
 asyncio = "^3.4.3"
@@ -15,6 +13,7 @@ cffi = "^1.15.0"
 cached-property = "^1.5.2"
 Pillow = "^8.4.0"
 redis = "^3.5.3"
+mgba = { path="mgba/src/platform/python" }
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"

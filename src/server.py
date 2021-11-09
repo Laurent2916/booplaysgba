@@ -12,6 +12,7 @@ from utils import User, Users
 logging.basicConfig(level=logging.DEBUG)
 
 r = redis.Redis(host="localhost", port=6379, db=0)
+# r = redis.Redis(host="redis", port=6379, db=0)
 r.mset(REDIS_INIT)
 
 USERS: Users = Users()
@@ -68,6 +69,7 @@ async def handler(websocket, path: str):
 async def main():
     """Start the websocket server."""
     async with websockets.serve(handler, "localhost", 6789):
+        # async with websockets.serve(handler, "0.0.0.0", 6789):
         await asyncio.Future()  # run forever
 
 

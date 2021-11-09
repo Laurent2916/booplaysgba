@@ -35,14 +35,15 @@ Build the mGBA python bindings:
 cd booplaysgba
 mkdir mgba/build
 cd mgba/build
-cmake -DBUILD_PYTHON=ON -DBUILD_QT=OFF -DBUILD_SDL=OFF ..
+cmake -DBUILD_PYTHON=ON -DBUILD_QT=OFF -DBUILD_SDL=OFF -DUSE_DISCORD_RPC=OFF ..
 make
 ```
 
 Install the dependencies :
 
 ```bash
-poetry install
+poetry run pip install --upgrade pip
+BINDIR=`pwd`/mgba/build/ LIBDIR=`pwd`/mgba/build/ poetry install
 ```
 
 ### Usage

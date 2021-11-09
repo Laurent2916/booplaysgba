@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  server:
+    build:
+      context: .
+      target: server
+    ports:
+      - 6789:6789
+  emulator:
+    build:
+      context: .
+      target: emulator
+  redis:
+    image: "redis:alpine"
+  rtmp:
+    image: "tiangolo/nginx-rtmp"
+    ports:
+      - 1935:1935
+
+# build mgba dans le conteuneur car broken path sinon
