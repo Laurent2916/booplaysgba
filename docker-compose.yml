@@ -3,7 +3,7 @@ services:
   server:
     build:
       context: .
-      target: server
+    entrypoint: poetry run python src/server.py
     ports:
       - 6789:6789
     depends_on:
@@ -11,7 +11,7 @@ services:
   emulator:
     build:
       context: .
-      target: emulator
+    entrypoint: poetry run python src/emulator.py
     depends_on:
       - "rtmp"
       - "redis"
@@ -23,5 +23,3 @@ services:
     image: "tiangolo/nginx-rtmp"
     ports:
       - 1935:1935
-
-# build mgba dans le conteuneur car broken path sinon

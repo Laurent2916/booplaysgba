@@ -18,7 +18,6 @@ core.reset()
 logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
 r = redis.Redis(host="redis", port=6379, db=0)
-# r = redis.Redis(host="redis", port=6379, db=0)
 
 
 def next_action():
