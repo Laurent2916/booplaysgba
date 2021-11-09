@@ -17,7 +17,7 @@ core.reset()
 
 logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
-r = redis.Redis(host="localhost", port=6379, db=0)
+r = redis.Redis(host="redis", port=6379, db=0)
 # r = redis.Redis(host="redis", port=6379, db=0)
 
 
@@ -63,7 +63,7 @@ stream = Popen(
         "low_delay",
         "-strict",
         "experimental",
-        "rtmp://localhost:1935/live/test",
+        "rtmp://rtmp:1935/live/test",
     ],
     stdin=PIPE,
 )

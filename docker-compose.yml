@@ -6,12 +6,19 @@ services:
       target: server
     ports:
       - 6789:6789
+    depends_on:
+      - "redis"
   emulator:
     build:
       context: .
       target: emulator
+    depends_on:
+      - "rtmp"
+      - "redis"
   redis:
     image: "redis:alpine"
+    ports:
+      - 6379:6379
   rtmp:
     image: "tiangolo/nginx-rtmp"
     ports:

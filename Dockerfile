@@ -9,9 +9,12 @@ RUN \
     # build tools dependencies
     && apk add build-base cmake git \
     # mgba dependencies
-    && apk add libffi-dev elfutils-dev libzip-tools minizip-dev libedit-dev sqlite-dev libepoxy-dev ffmpeg-dev libpng-dev \
+    && apk add libffi-dev elfutils-dev libzip-tools minizip-dev libedit-dev sqlite-dev libepoxy-dev ffmpeg ffmpeg-dev libpng-dev jpeg-dev \
     # install poetry and cffi deps for mgba
     && pip install poetry cffi
+
+# copy poetry config files
+COPY ./pyproject.toml /code/
 
 RUN \
     cd /code \
@@ -22,12 +25,17 @@ RUN \
     # go to the build directory
     && cd mgba/build \
     # configure the build
-    && cmake -DBUILD_PYTHON=ON -DBUILD_QT=OFF -DBUILD_SDL=OFF -DUSE_DISCORD_RPC=OFF .. \
+    && cmake -DBUILD_PYTHON=ON -DBUILD_QT=OFF -DBUILD_SDL=OFF -DUSE_DISCORD_RPC=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr/local .. \
     # build mGBA
-    && make
+    && make \
+    && make install \
+    && cd /code/mgba/src/platform/python/ \
+    && BINDIR=/code/mgba/build/include/ LIBDIR=/code/mgba/build/include/ python setup.py install \
+    && cd /code/ \
+    && poetry install
 
-# copy poetry config files
-COPY ./poetry.lock ./pyproject.toml /code/
+
+
 
 RUN \
     # go to the workdir
@@ -52,11 +60,11 @@ RUN \
 
 # copy the src files
 COPY ./src /code/
-
+COPY ./roms/pokemon.gba /code/roms/pokemon.gba
 # create server image
 FROM base as server
-CMD [ "python", "/code/server.py" ]
+CMD [ "poetry","run","python", "/code/server.py" ]
 
 # create emulator image
 FROM base as emulator
-CMD [ "python", "/code/emulator.py" ]
+CMD [ "poetry","run","python", "/code/emulator.py" ]
