@@ -13,7 +13,7 @@ services:
     ports:
       - $WEBSOCKET_PORT:$WEBSOCKET_PORT
     depends_on:
-      - "redis"
+      - redis
   emulator:
     build:
       context: .
@@ -25,15 +25,15 @@ services:
       - RTMP_HOST=$RTMP_HOST
       - RTMP_PORT=$RTMP_PORT
     depends_on:
-      - "rtmp"
-      - "redis"
+      - rtmp
+      - redis
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     restart: unless-stopped
     ports:
       - $REDIS_PORT:6379
   rtmp:
-    image: "tiangolo/nginx-rtmp"
+    image: tiangolo/nginx-rtmp
     restart: unless-stopped
     ports:
       - $RTMP_PORT:1935
