@@ -5,8 +5,8 @@ WEBSOCKET_PORT: int = int(getenv("WEBSOCKET_PORT", 6789))
 WEBSOCKET_URI: str = f"ws://{WEBSOCKET_HOST}:{WEBSOCKET_PORT}/"
 WEBSOCKET_LISTEN: str = getenv("WEBSOCKET_LISTEN", "localhost")
 
-RTMP_HOST: str = getenv("WEBSOCKET_HOST", "localhost")
-RTMP_PORT: int = int(getenv("WEBSOCKET_PORT", 1935))
+RTMP_HOST: str = getenv("RTMP_HOST", "localhost")
+RTMP_PORT: int = int(getenv("RTMP_PORT", 1935))
 RTMP_URI: str = f"rtmp://{RTMP_HOST}:{RTMP_PORT}/"
 RTMP_STREAM_PATH: str = getenv("RTMP_STREAM_PATH", "live")
 RTMP_STREAM_KEY: str = getenv("RTMP_STREAM_KEY", "test")
