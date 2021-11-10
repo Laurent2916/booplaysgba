@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   const websocket = new WebSocket("ws://localhost:6789/");
 
-  const sendAction = (key) => () => {
+  const sendAction = (key: string) => () => {
     websocket.send(JSON.stringify({ action: key }));
   };
 </script>
