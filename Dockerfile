@@ -1,4 +1,4 @@
-FROM python:alpine AS base
+FROM python:alpine
 
 # set /code as the work directory
 WORKDIR /code
@@ -49,11 +49,3 @@ RUN \
 # copy the src files
 COPY ./src /code/src
 COPY ./roms/pokemon.gba /code/roms/pokemon.gba
-
-# create server image
-FROM base as server
-CMD [ "poetry", "run", "python", "/code/src/server.py" ]
-
-# create emulator image
-FROM base as emulator
-CMD [ "poetry", "run", "python", "/code/src/emulator.py" ]
