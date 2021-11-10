@@ -59,16 +59,6 @@
 </table>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-  }
-
-  table {
-    margin: auto;
-    margin-top: 30vh;
-  }
-
   td {
     text-align: center;
   }
