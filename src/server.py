@@ -6,13 +6,22 @@ import time
 import redis
 import websockets
 
-from settings import KEYS, PASSWORD_ADMIN, REDIS_INIT, USER_TIMEOUT
+from settings import (
+    KEYS_ID,
+    KEYS_RESET,
+    PASSWORD_ADMIN,
+    REDIS_HOST,
+    REDIS_PORT,
+    USER_TIMEOUT,
+    WEBSOCKET_LISTEN,
+    WEBSOCKET_PORT,
+)
 from utils import User, Users
 
 logging.basicConfig(level=logging.DEBUG)
 
-r = redis.Redis(host="redis", port=6379, db=0)
-r.mset(REDIS_INIT)
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+r.mset(KEYS_RESET)
 
 USERS: Users = Users()
 
@@ -37,7 +46,7 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
         if user.last_message + USER_TIMEOUT > time.time():
             logging.debug(f"dropping action: {data}")
             return None
-        elif data in KEYS:
+        elif data in KEYS_ID:
             r.incr(data)
             user.last_message = time.time()
             user.has_voted = True
@@ -67,7 +76,7 @@ async def handler(websocket, path: str):
 
 async def main():
     """Start the websocket server."""
-    async with websockets.serve(handler, "0.0.0.0", 6789):  # nosec
+    async with websockets.serve(handler, WEBSOCKET_LISTEN, WEBSOCKET_PORT):  # nosec
         await asyncio.Future()  # run forever
 
 
