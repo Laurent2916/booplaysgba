@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from subprocess import PIPE, Popen  # nosec
@@ -83,21 +84,32 @@ stream = Popen(
     stdin=PIPE,
 )
 
-while True:
 
-    last_frame_t = time.time()
+async def emulator():
+    while True:
+        last_frame_t = time.time()
 
-    if not (core.frame_counter % EMULATOR_POLLING_RATE):
-        core.clear_keys(*KEYS_MGBA)
-        next_key = next_action()
-        if next_key != -1:
-            core.set_keys(next_key)
+        if not (core.frame_counter % EMULATOR_POLLING_RATE):
+            core.clear_keys(*KEYS_MGBA)
+            next_key = next_action()
+            if next_key != -1:
+                core.set_keys(next_key)
 
-    core.run_frame()
+        core.run_frame()
 
-    image = screen.to_pil().convert("RGB")
-    image.save(stream.stdin, "PNG")
+        image = screen.to_pil().convert("RGB")
+        image.save(stream.stdin, "PNG")
 
-    sleep_t = last_frame_t - time.time() + EMULATOR_SPF
-    if sleep_t > 0:
-        time.sleep(sleep_t)
+        sleep_t = last_frame_t - time.time() + EMULATOR_SPF
+        if sleep_t > 0:
+            # time.sleep(sleep_t)
+            await asyncio.sleep(sleep_t)
+
+
+async def main():
+    task_emulator = asyncio.create_task(emulator())
+    await task_emulator
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

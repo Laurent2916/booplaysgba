@@ -13,6 +13,6 @@
         }
     },
     "python.analysis.extraPaths": [
-        "./mgba/build/python/lib.linux-x86_64-3.9"
+        "./mgba/src/platform/python/build/lib.linux-x86_64-3.9/mgba"
     ],
 }
