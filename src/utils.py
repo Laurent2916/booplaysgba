@@ -67,3 +67,18 @@ class Users(set):
         """Clear the `has_voted` of each user in the set."""
         for user in self:
             user.has_voted = False
+
+
+# class States(set):
+#     def save(self, core):
+#         state = core.save_raw_state()
+#         with open(f"states/{time.strftime('%Y-%m-%dT%H:%M:%S')}.state", "wb") as state_file:
+#             for byte in state:
+#                 state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
+
+#     def load(self, core, state):
+#         state = ffi.new("unsigned char[397312]")
+#         with open("states/test.state", "rb") as state_file:
+#             for i in range(len(state)):
+#                 state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
+#         core.load_raw_state(state)

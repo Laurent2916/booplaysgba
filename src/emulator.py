@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import threading
 import time
 from subprocess import PIPE, Popen  # nosec
 
@@ -87,14 +88,18 @@ stream = Popen(
 )
 
 
-async def state_manager():
+def state_manager(loop):
+    print("ici")
     ps = r.pubsub()
     ps.subscribe("admin")
     while True:
-        message = ps.get_message(ignore_subscribe_messages=True)
-        if message is not None:
-            logging.debug(message)
-        await asyncio.sleep(5.0)
+        for message in ps.listen():
+            print(message)
+            asyncio.ensure_future(save(), loop=loop)
+
+
+async def save():
+    print("saving")
 
 
 async def emulator():
@@ -118,12 +123,16 @@ async def emulator():
             await asyncio.sleep(sleep_t)
 
 
-async def main():
-    task_emulator = asyncio.create_task(emulator())
-    task_state_manager = asyncio.create_task(state_manager())
+async def main(loop):
+    thread = threading.Thread(target=state_manager, args=(loop,))
+    thread.start()
+
+    task_emulator = loop.create_task(emulator())
     await task_emulator
-    await task_state_manager
+    thread.join()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main(loop))
+    loop.close()
