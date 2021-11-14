@@ -6,14 +6,16 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/server.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "envFile": ""
         },
         {
             "name": "Emulator",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/emulator.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "envFile": ""
         }
     ],
     "compounds": [

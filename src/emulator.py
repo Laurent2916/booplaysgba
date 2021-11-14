@@ -43,7 +43,7 @@ def next_action():
     Returns:
         int: key used by mgba
     """
-    votes = list(map(int, r.mget(KEYS_ID)))
+    votes: list[int] = list(map(int, r.mget(KEYS_ID)))
     if any(votes):
         r.mset(KEYS_RESET)
         return votes.index(max(votes))
@@ -79,10 +79,22 @@ stream = Popen(
         "low_delay",
         "-strict",
         "experimental",
+        # "-loglevel",
+        # "quiet",
         RTMP_STREAM_URI,
     ],
     stdin=PIPE,
 )
+
+
+async def state_manager():
+    ps = r.pubsub()
+    ps.subscribe("admin")
+    while True:
+        message = ps.get_message(ignore_subscribe_messages=True)
+        if message is not None:
+            logging.debug(message)
+        await asyncio.sleep(5.0)
 
 
 async def emulator():
@@ -108,7 +120,9 @@ async def emulator():
 
 async def main():
     task_emulator = asyncio.create_task(emulator())
+    task_state_manager = asyncio.create_task(state_manager())
     await task_emulator
+    await task_state_manager
 
 
 if __name__ == "__main__":

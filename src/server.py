@@ -40,6 +40,18 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
             logging.debug(f"admin authenticated: {user}")
             await user.send('{"auth":"success"}')
 
+    if "admin" in message:
+        if user == USERS.admin:
+            data = message["admin"]
+            if data == "save":
+                r.publish("admin", "save")
+            elif data == data.startswith("load:"):
+                r.publish("admin", data)
+            else:
+                logging.error(f"unsupported admin action: {data}")
+        else:
+            logging.error(f"user is not admin: {user}")
+
     if "action" in message:
         data = message["action"]
 
