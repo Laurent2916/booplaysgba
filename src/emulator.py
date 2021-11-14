@@ -123,7 +123,6 @@ async def emulator():
 
         sleep_t = last_frame_t - time.time() + EMULATOR_SPF
         if sleep_t > 0:
-            # time.sleep(sleep_t)
             await asyncio.sleep(sleep_t)
 
 

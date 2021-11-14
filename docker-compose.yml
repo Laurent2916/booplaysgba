@@ -27,6 +27,8 @@ services:
     depends_on:
       - rtmp
       - redis
+    volumes:
+    - ./states/:/code/states/
   redis:
     image: redis:alpine
     restart: unless-stopped
