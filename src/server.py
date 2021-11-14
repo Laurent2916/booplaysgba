@@ -61,7 +61,6 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
         elif data in KEYS_ID:
             r.incr(data)
             user.last_message = time.time()
-            user.has_voted = True
         else:
             logging.error(f"unsupported action: {data}")
 

@@ -27,6 +27,7 @@ from settings import (
     REDIS_PORT,
     RTMP_STREAM_URI,
 )
+from utils import States
 
 core = mgba.core.load_path(EMULATOR_ROM_PATH)
 screen = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
@@ -36,6 +37,8 @@ core.reset()
 logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+states: States = States()
 
 
 def next_action():
@@ -94,12 +97,13 @@ def state_manager(loop):
     ps.subscribe("admin")
     while True:
         for message in ps.listen():
-            print(message)
-            asyncio.ensure_future(save(), loop=loop)
-
-
-async def save():
-    print("saving")
+            logging.debug(message)
+            if message["type"] == "message":
+                data = message["data"].decode("utf-8")
+                if data == "save":
+                    asyncio.ensure_future(states.save(core), loop=loop)
+                elif data.startswith("load:"):
+                    asyncio.ensure_future(states.load(core, data.removeprefix("load:")), loop=loop)
 
 
 async def emulator():
@@ -129,7 +133,6 @@ async def main(loop):
 
     task_emulator = loop.create_task(emulator())
     await task_emulator
-    thread.join()
 
 
 if __name__ == "__main__":

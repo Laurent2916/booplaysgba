@@ -30,7 +30,7 @@ FFMPEG_BITRATE: str = getenv("FFMPEG_BIRATE", "2M")
 
 PASSWORD_ADMIN: str = getenv("PASSWORD_ADMIN", "password_admin")
 
-USER_TIMEOUT: float = 0.5
+USER_TIMEOUT: float = float(getenv("USER_TIMEOUT", 0.5))
 
 KEYMAP: dict[str, int] = {
     "a": 0,
