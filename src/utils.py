@@ -1,7 +1,10 @@
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Any, Optional
+
+from mgba._pylib import ffi
 
 
 class User:
@@ -9,7 +12,6 @@ class User:
 
     websocket: Any
     last_message: float
-    has_voted: bool
 
     def __init__(self, websocket: Any) -> None:
         """Construct a User object.
@@ -19,7 +21,6 @@ class User:
         """
         self.websocket = websocket
         self.last_message = time.time()
-        self.has_voted = False
 
     async def send(self, data: str):
         """Send data through the user's websocket.
@@ -42,7 +43,6 @@ class User:
 class Users(set):
     """Store `User`s connected to the server."""
 
-    emulator: Optional[User] = None
     admin: Optional[User] = None
 
     def register(self, user: User):
@@ -63,7 +63,26 @@ class Users(set):
         self.remove(user)
         logging.debug(f"user unregistered: {self}")
 
-    def clear(self) -> None:
-        """Clear the `has_voted` of each user in the set."""
-        for user in self:
-            user.has_voted = False
+
+class States(set):
+    """Save and load states from files."""
+
+    def __init__(self) -> None:
+        """Construct a `States` object."""
+        files = os.listdir("states")
+        states = list(filter(lambda x: x.endswith(".state"), files))
+        self.update(states)
+
+    async def save(self, core):
+        state = core.save_raw_state()
+        with open(f"states/{time.strftime('%Y-%m-%dT%H:%M:%S')}.state", "wb") as state_file:
+            for byte in state:
+                state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
+        self.add(state)
+
+    async def load(self, core, filename):
+        state = ffi.new("unsigned char[397312]")  # pulled 397312 from my ass
+        with open(f"states/{filename}.state", "rb") as state_file:
+            for i in range(len(state)):
+                state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
+        core.load_raw_state(state)

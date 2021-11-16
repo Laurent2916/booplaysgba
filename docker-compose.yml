@@ -1,0 +1,41 @@
+version: "3"
+services:
+  server:
+    build:
+      context: .
+    entrypoint: poetry run python src/server.py
+    restart: unless-stopped
+    environment:
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - WEBSOCKET_LISTEN=$WEBSOCKET_LISTEN
+      - WEBSOCKET_PORT=$WEBSOCKET_PORT
+    ports:
+      - $WEBSOCKET_PORT:$WEBSOCKET_PORT
+    depends_on:
+      - redis
+  emulator:
+    build:
+      context: .
+    entrypoint: poetry run python src/emulator.py
+    restart: unless-stopped
+    environment:
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - RTMP_HOST=$RTMP_HOST
+      - RTMP_PORT=$RTMP_PORT
+    depends_on:
+      - rtmp
+      - redis
+    volumes:
+    - ./states/:/code/states/
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - $REDIS_PORT:6379
+  rtmp:
+    image: tiangolo/nginx-rtmp
+    restart: unless-stopped
+    ports:
+      - $RTMP_PORT:1935

@@ -2,78 +2,78 @@
 <html>
 
 <head>
-    <title>Admin</title>
+  <title>Admin</title>
 
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
 
-        #dashboard {
-            display: none;
-        }
-    </style>
+    #dashboard {
+      display: none;
+    }
+  </style>
 
 </head>
 
 <body>
 
-    <div id="login">
-        <input type="password" id="password-text">
-        <input type="button" id="password-button" value="Login" onclick="sendCreds();">
-    </div>
+  <div id="login">
+    <input type="password" id="password-text">
+    <input type="button" id="password-button" value="Login" onclick="sendCreds();">
+  </div>
 
-    <div id="dashboard">
-        <ul id="stateList"></ul>
-        <button id="save">save</button>
-    </div>
+  <div id="dashboard">
+    <ul id="stateList"></ul>
+    <button id="save">save</button>
+  </div>
 
-    <script>
-        var websocket = new WebSocket("ws://127.0.0.1:6789/");
-        var passwordInput = document.querySelector('#password-text');
+  <script>
+    var websocket = new WebSocket("ws://127.0.0.1:6789/");
+    var passwordInput = document.querySelector('#password-text');
 
-        var divLogin = document.querySelector("#login");
-        var divDashboard = document.querySelector("#dashboard");
-        var stateList = document.querySelector("#stateList");
-        var saveButton = document.getElementById('save');
+    var divLogin = document.querySelector("#login");
+    var divDashboard = document.querySelector("#dashboard");
+    var stateList = document.querySelector("#stateList");
+    var saveButton = document.getElementById('save');
 
-        saveButton.onclick = function (event) {
-            websocket.send(JSON.stringify({ 'admin': 'save' }));
-        }
+    saveButton.onclick = function (event) {
+      websocket.send(JSON.stringify({ 'admin': 'save' }));
+    }
 
-        function receiveStates(ev) {
-            let msg = JSON.parse(ev.data);
-            let states = msg.state
-            for (var i = 0; i < states.length; i++) {
-                var state = states[i];
-                var li = document.createElement('li');
-                li.appendChild(document.createTextNode(state));
-                stateList.appendChild(li);
-            }
-        }
+    function receiveStates(ev) {
+      let msg = JSON.parse(ev.data);
+      let states = msg.state
+      for (var i = 0; i < states.length; i++) {
+        var state = states[i];
+        var li = document.createElement('li');
+        li.appendChild(document.createTextNode(state));
+        stateList.appendChild(li);
+      }
+    }
 
-        function authSuccess(ev) {
-            let msg = JSON.parse(ev.data);
-            if (msg.auth === "success") {
-                divLogin.style.display = "none";
-                divDashboard.style.display = "unset";
-                websocket.removeEventListener('message', authSuccess);
-                websocket.send(JSON.stringify({ "state": "get" }));
-                websocket.addEventListener('message', receiveStates);
-            }
-        };
+    function authSuccess(ev) {
+      let msg = JSON.parse(ev.data);
+      if (msg.auth === "success") {
+        divLogin.style.display = "none";
+        divDashboard.style.display = "unset";
+        websocket.removeEventListener('message', authSuccess);
+        websocket.send(JSON.stringify({ "state": "get" }));
+        websocket.addEventListener('message', receiveStates);
+      }
+    };
 
-        function sendCreds() {
-            var message = JSON.stringify({ "auth": passwordInput.value });
-            websocket.send(message)
-            websocket.addEventListener('message', authSuccess);
-        };
+    function sendCreds() {
+      var message = JSON.stringify({ "auth": passwordInput.value });
+      websocket.send(message)
+      websocket.addEventListener('message', authSuccess);
+    };
 
-        passwordInput.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") { sendCreds(); }
-        });
-    </script>
+    passwordInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { sendCreds(); }
+    });
+  </script>
 </body>
 
 </html>
