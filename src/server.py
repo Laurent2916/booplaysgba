@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import time
+from typing import Union
 
 import redis
 import websockets
@@ -38,14 +39,20 @@ async def parse_message(user: User, message: dict[str, str]) -> None:
         if USERS.admin is None and data == PASSWORD_ADMIN:
             USERS.admin = user
             logging.debug(f"admin authenticated: {user}")
-            await user.send('{"auth":"success"}')
+
+            response: dict[str, Union[str, list[str]]] = dict()
+            response["auth"] = "success"
+            states = r.smembers("states")
+            stringlist = [x.decode("utf-8") for x in states]
+            response["states"] = sorted(stringlist)
+            await user.send(json.dumps(response))
 
     if "admin" in message:
         if user == USERS.admin:
             data = message["admin"]
             if data == "save":
                 r.publish("admin", "save")
-            elif data == data.startswith("load:"):
+            elif data.startswith("load:"):
                 r.publish("admin", data)
             else:
                 logging.error(f"unsupported admin action: {data}")
@@ -82,6 +89,8 @@ async def handler(websocket, path: str):
             await parse_message(user, message)
     finally:
         # Unregister user
+        if user == USERS.admin:
+            USERS.admin = None
         USERS.unregister(user)
 
 

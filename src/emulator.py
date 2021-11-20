@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import threading
 import time
 from subprocess import PIPE, Popen  # nosec
@@ -9,6 +10,7 @@ import mgba.image
 import mgba.log
 import redis
 
+import utils
 from settings import (
     EMULATOR_FPS,
     EMULATOR_HEIGHT,
@@ -27,7 +29,6 @@ from settings import (
     REDIS_PORT,
     RTMP_STREAM_URI,
 )
-from utils import States
 
 core = mgba.core.load_path(EMULATOR_ROM_PATH)
 screen = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
@@ -37,8 +38,6 @@ core.reset()
 logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-
-states: States = States()
 
 
 def next_action():
@@ -97,13 +96,12 @@ def state_manager(loop):
     ps.subscribe("admin")
     while True:
         for message in ps.listen():
-            logging.debug(message)
             if message["type"] == "message":
                 data = message["data"].decode("utf-8")
                 if data == "save":
-                    asyncio.ensure_future(states.save(core), loop=loop)
+                    asyncio.ensure_future(utils.save(core), loop=loop)
                 elif data.startswith("load:"):
-                    asyncio.ensure_future(states.load(core, data.removeprefix("load:")), loop=loop)
+                    asyncio.ensure_future(utils.load(core, data.removeprefix("load:")), loop=loop)
 
 
 async def emulator():
@@ -127,6 +125,13 @@ async def emulator():
 
 
 async def main(loop):
+
+    # setup states in redis
+    files = os.listdir("states")
+    states = list(filter(lambda x: x.endswith(".state"), files))
+    for state in states:
+        r.sadd("states", state.removesuffix(".state"))  # voir si oneline possible
+
     thread = threading.Thread(target=state_manager, args=(loop,))
     thread.start()
 
