@@ -8,5 +8,5 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{yaml,yml,toml,html,svelte}]
+[*.{yaml,yml,toml,html,svelte,json,js,ts,prettierrc}]
 indent_size = 2
