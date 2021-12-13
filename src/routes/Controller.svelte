@@ -2,13 +2,20 @@
   import { onMount } from 'svelte';
 
   let websocket: WebSocket | undefined;
+  let last_time: number = new Date().getTime();
 
   onMount(() => {
     websocket = new WebSocket('ws://localhost:6789/');
   });
 
   const sendAction = (key: string) => () => {
-    if (websocket) websocket.send(JSON.stringify({ action: key }));
+    if (websocket) {
+      let current_time: number = new Date().getTime();
+      if (current_time - last_time > 500) {
+        websocket.send(JSON.stringify({ action: key }));
+        last_time = current_time;
+      }
+    }
   };
 </script>
 
