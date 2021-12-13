@@ -1,8 +1,14 @@
 <script lang="ts">
-  const websocket: WebSocket = new WebSocket("ws://localhost:6789/");
+  import { onMount } from "svelte";
+
+  let websocket: WebSocket | undefined;
+
+  onMount(() => {
+    websocket = new WebSocket("ws://localhost:6789/");
+  });
 
   const sendAction = (key: string) => () => {
-    websocket.send(JSON.stringify({ action: key }));
+    if (websocket) websocket.send(JSON.stringify({ action: key }));
   };
 </script>
 
@@ -36,7 +42,7 @@
       <button id="left" on:click={sendAction("left")}> &lt; </button>
     </td>
     <td />
-    <td style="padding-right: 3rem;">
+    <td style="padding-right: 20%;">
       <button id="right" on:click={sendAction("right")}> > </button>
     </td>
     <td />
@@ -58,15 +64,18 @@
   </tr>
 </table>
 
-<style>
+<style lang="sass">
   td {
     text-align: center;
   }
 
+  button {
+    width: 100%;
+    height: 100%;
+  }
+
   #a,
   #b {
-    width: 2rem;
-    height: 2rem;
     border-radius: 50%;
   }
 
@@ -74,8 +83,8 @@
   #right,
   #up,
   #down {
-    width: 2rem;
-    height: 2rem;
+    width: 10%;
+    height: 10%;
     border-radius: 10%;
   }
 
@@ -83,7 +92,7 @@
   #select,
   #l,
   #r {
-    width: 3.5rem;
+    width: 20%;
     border-radius: 25%;
   }
 </style>

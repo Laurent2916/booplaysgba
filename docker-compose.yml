@@ -14,6 +14,7 @@ services:
       - $WEBSOCKET_PORT:$WEBSOCKET_PORT
     depends_on:
       - redis
+
   emulator:
     build:
       context: .
@@ -28,12 +29,14 @@ services:
       - rtmp
       - redis
     volumes:
-    - ./states/:/code/states/
+      - ./states/:/code/states/
+
   redis:
     image: redis:alpine
     restart: unless-stopped
     ports:
       - $REDIS_PORT:6379
+
   rtmp:
     image: tiangolo/nginx-rtmp
     restart: unless-stopped
