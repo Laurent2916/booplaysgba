@@ -16,36 +16,36 @@
 
 <table class="buttons">
   <tr>
-    <td colspan="2" style="padding-bottom: 1rem;">
-      <button id="l" on:click={sendAction('l')}>L</button>
+    <td colspan="2" id="l">
+      <button on:click={sendAction('l')}>L</button>
     </td>
     <td />
-    <td colspan="2" style="padding-bottom: 1rem; text-align: right;">
-      <button id="r" on:click={sendAction('r')}>R</button>
+    <td colspan="2" id="r">
+      <button on:click={sendAction('r')}>R</button>
     </td>
   </tr>
 
   <tr>
     <td />
-    <td>
-      <button id="up" on:click={sendAction('up')}> ∧ </button>
+    <td id="up">
+      <button on:click={sendAction('up')}> ∧ </button>
     </td>
     <td />
-    <td>
-      <button id="select" on:click={sendAction('select')}> select </button>
+    <td id="select">
+      <button on:click={sendAction('select')}> select </button>
     </td>
-    <td>
-      <button id="start" on:click={sendAction('start')}> start </button>
+    <td id="start">
+      <button on:click={sendAction('start')}> start </button>
     </td>
   </tr>
 
   <tr>
-    <td>
-      <button id="left" on:click={sendAction('left')}> &lt; </button>
+    <td id="left">
+      <button on:click={sendAction('left')}> &lt; </button>
     </td>
     <td />
-    <td style="padding-right: 20%;">
-      <button id="right" on:click={sendAction('right')}> > </button>
+    <td id="right">
+      <button on:click={sendAction('right')}> > </button>
     </td>
     <td />
     <td />
@@ -53,15 +53,15 @@
 
   <tr>
     <td />
-    <td>
-      <button id="down" on:click={sendAction('down')}> ∨ </button>
+    <td id="down">
+      <button on:click={sendAction('down')}> ∨ </button>
     </td>
     <td />
-    <td>
-      <button id="a" on:click={sendAction('a')}>A</button>
+    <td id="a">
+      <button on:click={sendAction('a')}>A</button>
     </td>
-    <td>
-      <button id="b" on:click={sendAction('b')}>B</button>
+    <td id="b">
+      <button on:click={sendAction('b')}>B</button>
     </td>
   </tr>
 </table>
@@ -69,32 +69,47 @@
 <style lang="scss">
   td {
     text-align: center;
-  }
-
-  button {
-    width: 100%;
-    height: 100%;
+    button {
+      width: 10vw;
+      height: 10vw;
+    }
   }
 
   #a,
   #b {
-    border-radius: 50%;
+    button {
+      border-radius: 50%;
+    }
   }
 
   #left,
   #right,
   #up,
   #down {
-    width: 10%;
-    height: 10%;
-    border-radius: 10%;
+    button {
+      border-radius: 10%;
+    }
   }
 
   #start,
   #select,
   #l,
   #r {
-    width: 20%;
-    border-radius: 25%;
+    button {
+      width: 20vw;
+      border-radius: 25%;
+    }
+  }
+
+  #r,
+  #l {
+    padding-bottom: 10vw;
+  }
+  #r {
+    text-align: right;
+  }
+
+  #right {
+    padding-right: 15vw;
   }
 </style>
