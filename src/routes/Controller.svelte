@@ -74,49 +74,84 @@
 </table>
 
 <style lang="scss">
-  td {
-    text-align: center;
+  @media (orientation: landscape) {
+    button {
+      width: 10vh;
+      height: 10vh;
+    }
+
+    #start,
+    #select,
+    #l,
+    #r {
+      button {
+        width: 20vh;
+      }
+    }
+
+    #r,
+    #l {
+      padding-bottom: 10vh;
+    }
+
+    #right {
+      padding-right: 15vh;
+    }
+  }
+
+  @media (orientation: portrait) {
     button {
       width: 10vw;
       height: 10vw;
     }
-  }
 
-  #a,
-  #b {
-    button {
-      border-radius: 50%;
+    #start,
+    #select,
+    #l,
+    #r {
+      button {
+        width: 20vw;
+      }
+    }
+
+    #r,
+    #l {
+      padding-bottom: 10vw;
+    }
+
+    #right {
+      padding-right: 15vw;
     }
   }
 
-  #left,
-  #right,
-  #up,
-  #down {
-    button {
-      border-radius: 10%;
+  td {
+    text-align: center;
+    &#r {
+      text-align: right;
     }
-  }
-
-  #start,
-  #select,
-  #l,
-  #r {
-    button {
-      width: 20vw;
-      border-radius: 25%;
+    &#start,
+    &#select,
+    &#l,
+    &#r {
+      button {
+        border-radius: 25%;
+      }
     }
-  }
 
-  #r,
-  #l {
-    padding-bottom: 10vw;
-  }
-  #r {
-    text-align: right;
-  }
+    &#left,
+    &#right,
+    &#up,
+    &#down {
+      button {
+        border-radius: 10%;
+      }
+    }
 
-  #right {
-    padding-right: 15vw;
+    &#a,
+    &#b {
+      button {
+        border-radius: 50%;
+      }
+    }
   }
 </style>

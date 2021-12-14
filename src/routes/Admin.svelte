@@ -7,11 +7,11 @@
     websocket = new WebSocket('ws://localhost:6789/');
   });
 
-  let passwordInput = document.querySelector('#password-text');
-  let divLogin = document.querySelector('#login');
-  let divDashboard = document.querySelector('#dashboard');
-  let stateList = document.querySelector('#stateList');
-  let saveButton = document.getElementById('save');
+  let passwordInput = document.querySelector('#password-text') as HTMLElement;
+  let divLogin = document.querySelector('#login') as HTMLElement;
+  let divDashboard = document.querySelector('#dashboard') as HTMLElement;
+  let stateList = document.querySelector('#stateList') as HTMLElement;
+  let saveButton = document.getElementById('save') as HTMLElement;
 
   saveButton.onclick = function (event) {
     websocket.send(JSON.stringify({ admin: 'save' }));
@@ -43,7 +43,7 @@
 
   const sendCreds = () => () => {
     if (websocket) {
-      let message = JSON.stringify({ auth: passwordInput.value });
+      let message = JSON.stringify({ auth: (<HTMLInputElement>passwordInput).value });
       websocket.send(message);
       websocket.addEventListener('message', authSuccess);
     }
