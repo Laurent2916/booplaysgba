@@ -4,11 +4,3 @@ roms/
 states/
 __pycache__/
 *.rdb
-
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-.env
-.env.*
