@@ -42,6 +42,7 @@ make
 Install the dependencies :
 
 ```bash
+cd ../..
 poetry run pip install --upgrade pip
 BINDIR=`pwd`/mgba/build/ LIBDIR=`pwd`/mgba/build/ poetry install
 ```
@@ -58,12 +59,6 @@ To run locally the emulator :
 
 ```bash
 python3 src/emulator.py
-```
-
-To access the remote controller :
-
-```bash
-firefox src/client.py
 ```
 
 ## Contributing

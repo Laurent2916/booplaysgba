@@ -6,7 +6,7 @@ authors = ["Laureηt <laurentfainsin@protonmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 asyncio = "^3.4.3"
 websockets = "^10.0"
 cffi = "^1.15.0"
