@@ -30,14 +30,15 @@ from settings import (
     RTMP_STREAM_URI,
 )
 
-core = mgba.core.load_path(EMULATOR_ROM_PATH)
-screen = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
+core: mgba.core = mgba.core.load_path(EMULATOR_ROM_PATH)
+screen: mgba.image = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
 core.set_video_buffer(screen)
 core.reset()
 
 logging.basicConfig(level=logging.DEBUG)
 mgba.log.silence()
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+r: redis.Redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 def next_action():
@@ -90,8 +91,7 @@ stream = Popen(
 )
 
 
-def state_manager(loop):
-    print("ici")
+def state_manager(loop: asyncio.AbstractEventLoop):
     ps = r.pubsub()
     ps.subscribe("admin")
     while True:
@@ -124,7 +124,9 @@ async def emulator():
             await asyncio.sleep(sleep_t)
 
 
-async def main(loop):
+async def main():
+
+    loop = asyncio.get_event_loop()
 
     # setup states in redis
     files = os.listdir("states")
@@ -132,14 +134,14 @@ async def main(loop):
     for state in states:
         r.sadd("states", state.removesuffix(".state"))  # voir si oneline possible
 
+    # launch the thread to save/load states/games
     thread = threading.Thread(target=state_manager, args=(loop,))
     thread.start()
 
+    # launch the event loop, which the emulator relies on
     task_emulator = loop.create_task(emulator())
     await task_emulator
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(loop))
-    loop.close()
+    asyncio.run(main())
