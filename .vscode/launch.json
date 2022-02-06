@@ -1,31 +1,31 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Server",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/server.py",
-            "console": "integratedTerminal",
-            "envFile": ""
-        },
-        {
-            "name": "Emulator",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/emulator.py",
-            "console": "integratedTerminal",
-            "envFile": ""
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Server/Emulator",
-            "configurations": [
-                "Server",
-                "Emulator"
-            ],
-            "stopAll": true
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Server",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/server.py",
+      "console": "integratedTerminal",
+      "envFile": ""
+    },
+    {
+      "name": "Emulator",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/emulator.py",
+      "console": "integratedTerminal",
+      "envFile": ""
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Server/Emulator",
+      "configurations": [
+        "Server",
+        "Emulator"
+      ],
+      "stopAll": true
+    }
+  ]
 }
