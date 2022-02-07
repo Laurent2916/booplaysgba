@@ -14,8 +14,8 @@ from settings import (
     REDIS_HOST,
     REDIS_PORT,
     USER_TIMEOUT,
-    WEBSOCKET_LISTEN,
     WEBSOCKET_PORT,
+    WEBSOCKET_SERVE,
 )
 from utils import User, Users
 
@@ -96,7 +96,7 @@ async def handler(websocket, path: str):
 
 async def main():
     """Start the websocket server."""
-    async with websockets.serve(handler, WEBSOCKET_LISTEN, WEBSOCKET_PORT):  # nosec
+    async with websockets.serve(handler, WEBSOCKET_SERVE, WEBSOCKET_PORT):  # nosec
         await asyncio.Future()  # run forever
 
 

@@ -3,7 +3,7 @@ from os import getenv
 WEBSOCKET_HOST: str = getenv("WEBSOCKET_HOST", "localhost")
 WEBSOCKET_PORT: int = int(getenv("WEBSOCKET_PORT", 6789))
 WEBSOCKET_URI: str = f"ws://{WEBSOCKET_HOST}:{WEBSOCKET_PORT}/"
-WEBSOCKET_LISTEN: str = getenv("WEBSOCKET_LISTEN", "localhost")
+WEBSOCKET_SERVE: str = getenv("WEBSOCKET_SERVE", "localhost")
 
 RTMP_HOST: str = getenv("RTMP_HOST", "localhost")
 RTMP_PORT: int = int(getenv("RTMP_PORT", 1935))
