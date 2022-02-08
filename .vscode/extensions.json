@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-azuretools.vscode-docker",
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    "esbenp.prettier-vscode",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "njpwerner.autodocstring",
+    "ms-vscode-remote.remote-containers",
+    "vivaxy.vscode-conventional-commits"
+  ]
+}
