@@ -45,10 +45,10 @@ async def parse_message(user: User, message: websockets.typing.Data) -> None:
     if user.last_message + USER_TIMEOUT > time.time():
         logging.debug(f"dropping action: {message!r} from {user}")
         return None
-    elif message in KEYS_ID:
-        r.incr(message)
+    elif (msg := KEYS_ID[int(message)]) in KEYS_ID:
+        r.incr(msg)
         user.last_message = time.time()
-        logging.debug(f"received action: {message!r} from {user}")
+        logging.debug(f"received action: {msg} from {user}")
     else:
         logging.error(f"unsupported action: {message!r} from {user}")
 
@@ -63,7 +63,6 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
     # Register user
     user = User(websocket)
     USERS.register(user)
-    logging.debug(f"registered user {user}")
 
     try:  # Manage received messages
         async for message in user.websocket:
@@ -74,11 +73,11 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
         logging.error(f"two coroutines called recv() concurrently, user={user}")
     finally:
         USERS.unregister(user)
-        logging.debug(f"unregistered user {user}")
 
 
 async def main():
     """Start the websocket server."""
+    logging.debug("Server started !")
     async with websockets.serve(handler, WEBSOCKET_SERVE, WEBSOCKET_PORT):  # nosec
         await asyncio.Future()  # run forever
 

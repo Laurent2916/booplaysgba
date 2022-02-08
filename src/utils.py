@@ -60,7 +60,7 @@ class Users(set):
             user (User): the user to unregister.
         """
         self.remove(user)
-        logging.debug(f"user unregistered: {self}")
+        logging.debug(f"user unregistered: {user}")
 
 
 async def save(core):
