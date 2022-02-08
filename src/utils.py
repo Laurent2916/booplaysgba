@@ -1,15 +1,17 @@
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
+import websockets.server
+import websockets.typing
 from mgba._pylib import ffi
 
 
 class User:
     """Store infos related to a connected user."""
 
-    websocket: Any
+    websocket: websockets.server.WebSocketServerProtocol
     last_message: float
 
     def __init__(self, websocket: Any) -> None:
@@ -42,8 +44,6 @@ class User:
 class Users(set):
     """Store `User`s connected to the server."""
 
-    admin: Optional[User] = None
-
     def register(self, user: User):
         """Register a user in the set.
 
@@ -73,7 +73,8 @@ async def save(core):
 
 
 async def load(core, filename):
-    state = ffi.new("unsigned char[397312]")  # pulled 397312 from my ass
+    state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass
+    # TODO: checker les sources mgba pour savoir d'où sort 397312
     with open(f"states/{filename}.state", "rb") as state_file:
         for i in range(len(state)):
             state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)

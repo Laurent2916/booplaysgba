@@ -1,16 +1,18 @@
+"""Websocket server, responsible for proxying user inputs."""
+
 import asyncio
-import json
 import logging
 import time
-from typing import Union
 
 import redis
 import websockets
+import websockets.exceptions
+import websockets.server
+import websockets.typing
 
 from settings import (
     KEYS_ID,
     KEYS_RESET,
-    PASSWORD_ADMIN,
     REDIS_HOST,
     REDIS_PORT,
     USER_TIMEOUT,
@@ -27,71 +29,46 @@ r.mset(KEYS_RESET)
 USERS: Users = Users()
 
 
-async def parse_message(user: User, message: dict[str, str]) -> None:
+async def parse_message(user: User, message: websockets.typing.Data) -> None:
     """Parse the user's message.
 
     Args:
         user (User): the sender of the message.
-        message (dict[str, str]): the data received (through the websocket).
+        message (str): the key received (through the websocket).
     """
-    if "auth" in message:
-        data = message["auth"]
-        if USERS.admin is None and data == PASSWORD_ADMIN:
-            USERS.admin = user
-            logging.debug(f"admin authenticated: {user}")
-
-            response: dict[str, Union[str, list[str]]] = dict()
-            response["auth"] = "success"
-            states = r.smembers("states")
-            stringlist = [x.decode("utf-8") for x in states]
-            response["states"] = sorted(stringlist)
-            await user.send(json.dumps(response))
-
-    if "admin" in message:
-        if user == USERS.admin:
-            data = message["admin"]
-            if data == "save":
-                r.publish("admin", "save")
-            elif data.startswith("load:"):
-                r.publish("admin", data)
-            else:
-                logging.error(f"unsupported admin action: {data}")
-        else:
-            logging.error(f"user is not admin: {user}")
-
-    if "action" in message:
-        data = message["action"]
-
-        if user.last_message + USER_TIMEOUT > time.time():
-            logging.debug(f"dropping action: {data}")
-            return None
-        elif data in KEYS_ID:
-            r.incr(data)
-            user.last_message = time.time()
-        else:
-            logging.error(f"unsupported action: {data}")
+    if user.last_message + USER_TIMEOUT > time.time():
+        logging.debug(f"dropping action: {message!r} from {user}")
+        return None
+    elif message in KEYS_ID:
+        r.incr(message)
+        user.last_message = time.time()
+        logging.debug(f"received action: {message!r} from {user}")
+    else:
+        logging.error(f"unsupported action: {message!r} from {user}")
 
 
-async def handler(websocket, path: str):
+async def handler(websocket: websockets.server.WebSocketServerProtocol, path: str):
     """Handle the messages sent by a user.
 
     Args:
         websocket: the websocket used by the user.
-        path (str): the path used by the websocket. (?)
+        path (str): the path used by the websocket.
     """
-    try:
-        # Register user
-        user = User(websocket)
-        USERS.register(user)
-        # Manage received messages
-        async for json_message in websocket:
-            message: dict[str, str] = json.loads(json_message)
+    # Register user
+    user = User(websocket)
+    USERS.register(user)
+    logging.debug(f"registered user {user}")
+
+    try:  # Manage received messages
+        async for message in user.websocket:
             await parse_message(user, message)
+    except websockets.exceptions.ConnectionClosed:
+        logging.error(f"connection with user {user} is already closed")
+    except RuntimeError:
+        logging.error(f"two coroutines called recv() concurrently, user={user}")
     finally:
-        # Unregister user
-        if user == USERS.admin:
-            USERS.admin = None
         USERS.unregister(user)
+        logging.debug(f"unregistered user {user}")
 
 
 async def main():

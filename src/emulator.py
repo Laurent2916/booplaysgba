@@ -1,3 +1,5 @@
+"""Emulator server, responsible for handling user inputs and outputting video & sound."""
+
 import asyncio
 import logging
 import os
@@ -30,8 +32,8 @@ from settings import (
     RTMP_STREAM_URI,
 )
 
-core: mgba.core = mgba.core.load_path(EMULATOR_ROM_PATH)
-screen: mgba.image = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
+core: mgba.core.Core = mgba.core.load_path(EMULATOR_ROM_PATH)
+screen: mgba.image.Image = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
 core.set_video_buffer(screen)
 core.reset()
 
@@ -41,20 +43,7 @@ mgba.log.silence()
 r: redis.Redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
-def next_action():
-    """Select the next key from the redis database.
-
-    Returns:
-        int: key used by mgba
-    """
-    votes: list[int] = list(map(int, r.mget(KEYS_ID)))
-    if any(votes):
-        r.mset(KEYS_RESET)
-        return votes.index(max(votes))
-    else:
-        return -1
-
-
+# Launch ffmpeg process
 stream = Popen(
     [
         "/usr/bin/ffmpeg",
@@ -91,13 +80,37 @@ stream = Popen(
 )
 
 
+def next_action():
+    """Select the next key from the redis database.
+
+    Returns:
+        int: key used by mgba.
+    """
+    votes: list[int] = list(map(int, r.mget(KEYS_ID)))
+    if any(votes):
+        r.mset(KEYS_RESET)
+        return votes.index(max(votes))
+    else:
+        return -1
+
+
 def state_manager(loop: asyncio.AbstractEventLoop):
+    """Subscribe and respond to messages received from redis.
+
+    Args:
+        loop (asyncio.AbstractEventLoop): the asyncio event loop.
+    """
     ps = r.pubsub()
     ps.subscribe("admin")
+
     while True:
         for message in ps.listen():
             if message["type"] == "message":
                 data = message["data"].decode("utf-8")
+
+                # TODO: voir si plus clean possible ?
+                # TODO: dev dans un docker ?
+
                 if data == "save":
                     asyncio.ensure_future(utils.save(core), loop=loop)
                 elif data.startswith("load:"):
@@ -105,27 +118,32 @@ def state_manager(loop: asyncio.AbstractEventLoop):
 
 
 async def emulator():
+    """Start the main loop responsible for handling inputs and sending images to ffmpeg."""
     while True:
         last_frame_t = time.time()
 
+        # poll redis for keys
         if not (core.frame_counter % EMULATOR_POLLING_RATE):
             core.clear_keys(*KEYS_MGBA)
             next_key = next_action()
             if next_key != -1:
                 core.set_keys(next_key)
 
+        # mGBA run next frame
         core.run_frame()
 
+        # save frame to PNG image
         image = screen.to_pil().convert("RGB")
         image.save(stream.stdin, "PNG")
 
+        # sleep until next frame, if necessary
         sleep_t = last_frame_t - time.time() + EMULATOR_SPF
         if sleep_t > 0:
             await asyncio.sleep(sleep_t)
 
 
 async def main():
-
+    """Start the emulator."""
     loop = asyncio.get_event_loop()
 
     # setup states in redis
@@ -145,3 +163,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+    # TODO: write code when ctrl+C -> save redis database ?
