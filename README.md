@@ -1,25 +1,41 @@
 # B00 plays GBA
 
+B00 plays GBA is an interactive emulator made to entertain people during waiting phases, such as during TVn7 pre-shows.
+
+<!-- mettre d'autres images, des screenshots -->
+
 ## Built with
+
+### Technologies
 
 - [Python](https://www.python.org/)
 - [mGBA](https://mgba.io/)
-- [VS Code](https://code.visualstudio.com/)
-- [Websockets](https://websockets.readthedocs.io/)
 - [Redis](https://redis.io/)
+- [Websockets](https://websockets.readthedocs.io/)
 - [Nginx-RTMP](https://hub.docker.com/r/tiangolo/nginx-rtmp/)
+- [FFmpeg](https://www.ffmpeg.org)
+
+### Tools
+
+- [Poetry](https://python-poetry.org/)
+- [Docker](https://www.docker.com/)
+- [Kubernetes](https://kubernetes.io/)
+- [Docker-slim](https://dockersl.im/)
 - [AGB-buttontest](https://github.com/heroldev/AGB-buttontest)
 
-## Getting started
-
-### Prerequisites
-
-[Poetry](https://python-poetry.org/) should manage every dependencies for you. \
-It is recommended to use [VS Code](https://code.visualstudio.com/) with these extensions :
+### [VSCode](https://code.visualstudio.com/)
 
 - [ms-python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
 - [Python Docstring Generator](https://marketplace.visualstudio.com/items?itemName=njpwerner.autodocstring)
+- [Conventional Commits](https://marketplace.visualstudio.com/items?itemName=vivaxy.vscode-conventional-commits)
+- [Remote container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
+- [Kubernetes](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+
+
+## Getting started
 
 ### Installation
 
@@ -63,8 +79,8 @@ python3 src/emulator.py
 
 ## Contributing
 
-This repository is under the [Contributing Covenant](https://www.contributor-covenant.org/) code of conduct.
-See [`CONTRIBUTING.md`](https://git.inpt.fr/fainsil/booplaysgba/-/blob/master/CONTRIBUTING.md) for more information.\
+This repository is under the [Contributing Covenant](https://www.contributor-covenant.org/) code of conduct. \
+See [`CONTRIBUTING.md`](https://git.inpt.fr/fainsil/booplaysgba/-/blob/master/CONTRIBUTING.md) for more information. \
 Please use [conventional commits](https://www.conventionalcommits.org/).
 
 ## License
