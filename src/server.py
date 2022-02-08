@@ -21,7 +21,13 @@ from settings import (
 )
 from utils import User, Users
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)")
+
+# disable all loggers from different files
+logging.getLogger("asyncio").setLevel(logging.ERROR)
+logging.getLogger("asyncio.coroutines").setLevel(logging.ERROR)
+logging.getLogger("websockets.server").setLevel(logging.ERROR)
+logging.getLogger("websockets.protocol").setLevel(logging.ERROR)
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 r.mset(KEYS_RESET)
