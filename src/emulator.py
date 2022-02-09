@@ -91,7 +91,7 @@ def next_action():
         r.mset(KEYS_RESET)
         return votes.index(max(votes))
     else:
-        return -1
+        return -1  # TODO: add random
 
 
 def state_manager(loop: asyncio.AbstractEventLoop):

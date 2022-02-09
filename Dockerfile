@@ -15,7 +15,7 @@ RUN \
 RUN \
     cd /code \
     # clone mgba
-    && git clone https://github.com/mgba-emu/mgba.git --branch 0.9 mgba \
+    && git clone https://github.com/mgba-emu/mgba.git mgba \
     # create build directory
     && mkdir mgba/build \
     # go to the build directory
