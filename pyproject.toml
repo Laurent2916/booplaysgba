@@ -16,13 +16,13 @@ redis = "^3.5.3"
 mgba = { path="mgba/src/platform/python" }
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
+black = "^22.1"
 flake8 = "^4.0.1"
 flake8-docstrings = "^1.6.0"
 pre-commit = "^2.15.0"
 bandit = "^1.7.0"
 isort = "^5.9.3"
-mypy = "^0.910"
+mypy = "^0.931"
 types-redis = "^3.5.15"
 
 [build-system]
@@ -31,7 +31,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
-target-version = ['py37', 'py38']
+target-version = ["py310"]
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -45,6 +45,6 @@ profile = "black"
 multi_line_output = 3
 
 [tool.mypy]
-python_version = 3.9
+python_version = 3.10
 warn_return_any = true
 warn_unused_configs = true
