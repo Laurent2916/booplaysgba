@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import os
+import random as rd
 import threading
 import time
 from subprocess import PIPE, Popen  # nosec
@@ -17,6 +18,7 @@ from settings import (
     EMULATOR_FPS,
     EMULATOR_HEIGHT,
     EMULATOR_POLLING_RATE,
+    EMULATOR_RAND_RATE,
     EMULATOR_ROM_PATH,
     EMULATOR_SPF,
     EMULATOR_WIDTH,
@@ -80,7 +82,7 @@ stream = Popen(
 )
 
 
-def next_action():
+def next_action(core: mgba.core.Core):
     """Select the next key from the redis database.
 
     Returns:
@@ -89,9 +91,11 @@ def next_action():
     votes: list[int] = list(map(int, r.mget(KEYS_ID)))
     if any(votes):
         r.mset(KEYS_RESET)
-        return votes.index(max(votes))
+        core.set_keys(votes.index(max(votes)))
+    elif EMULATOR_RAND_RATE != 0.0 and rd.random() < EMULATOR_RAND_RATE:  # nosec
+        core.set_keys(rd.choice(KEYS_MGBA))  # nosec
     else:
-        return -1  # TODO: add random
+        core.clear_keys(*KEYS_MGBA)
 
 
 def state_manager(loop: asyncio.AbstractEventLoop):
@@ -122,10 +126,7 @@ async def emulator():
 
         # poll redis for keys
         if not (core.frame_counter % EMULATOR_POLLING_RATE):
-            core.clear_keys(*KEYS_MGBA)
-            next_key = next_action()
-            if next_key != -1:
-                core.set_keys(next_key)
+            next_action(core)
 
         # mGBA run next frame
         core.run_frame()
@@ -162,4 +163,4 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-    # TODO: write code when ctrl+C -> save redis database ?
+    # TODO: save redis database when SIGINT ?

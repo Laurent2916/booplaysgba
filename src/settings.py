@@ -22,6 +22,7 @@ EMULATOR_SPF: float = 1.0 / EMULATOR_FPS
 EMULATOR_INPUT_HZ: int = int(getenv("EMULATOR_INPUT_HZ", 10))
 EMULATOR_POLLING_RATE: int = EMULATOR_FPS // EMULATOR_INPUT_HZ
 EMULATOR_ROM_PATH: str = getenv("EMULATOR_ROM_PATH", "roms/pokemon.gba")
+EMULATOR_RAND_RATE: float = float(getenv("EMULATOR_RAND_RATE", 0.0))
 
 FFMPEG_WIDTH: int = int(getenv("FFMPEG_WIDTH", EMULATOR_WIDTH))
 FFMPEG_HEIGHT: int = int(getenv("FFMPEG_HEIGHT", EMULATOR_HEIGHT))
@@ -44,6 +45,6 @@ KEYMAP: dict[str, int] = {
     "r": 8,
     "l": 9,
 }
-KEYS_ID: tuple = tuple(KEYMAP.keys())
-KEYS_MGBA: tuple = tuple(KEYMAP.values())
-KEYS_RESET: dict = dict([(x, 0) for x in KEYS_ID])
+KEYS_ID: tuple[str, ...] = tuple(KEYMAP.keys())
+KEYS_MGBA: tuple[int, ...] = tuple(KEYMAP.values())
+KEYS_RESET: dict[str, int] = dict([(x, 0) for x in KEYS_ID])

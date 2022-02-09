@@ -3,6 +3,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+import mgba.core
 import websockets.server
 import websockets.typing
 from mgba._pylib import ffi
@@ -63,7 +64,7 @@ class Users(set):
         logging.debug(f"user unregistered: {user}")
 
 
-async def save(core):
+async def save(core: mgba.core.Core):
     state = core.save_raw_state()
     current_time = time.strftime("%Y-%m-%dT%H:%M:%S")
     with open(f"states/{current_time}.state", "wb") as state_file:
@@ -72,9 +73,8 @@ async def save(core):
     logging.debug(f"state saved : {current_time}.state")
 
 
-async def load(core, filename):
-    state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass
-    # TODO: checker les sources mgba pour savoir d'où sort 397312
+async def load(core: mgba.core.Core, filename: str):
+    state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass, TODO: check mGBA sources ?
     with open(f"states/{filename}.state", "rb") as state_file:
         for i in range(len(state)):
             state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
