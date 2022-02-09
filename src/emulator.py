@@ -106,15 +106,13 @@ def state_manager(loop: asyncio.AbstractEventLoop):
     while True:
         for message in ps.listen():
             if message["type"] == "message":
-                data = message["data"].decode("utf-8")
-
-                # TODO: voir si plus clean possible ?
-                # TODO: dev dans un docker ?
-
-                if data == "save":
-                    asyncio.ensure_future(utils.save(core), loop=loop)
-                elif data.startswith("load:"):
-                    asyncio.ensure_future(utils.load(core, data.removeprefix("load:")), loop=loop)
+                match message["data"].decode("utf-8").split(":"):
+                    case ["save"]:
+                        asyncio.ensure_future(utils.save(core), loop=loop)
+                    case ["load", filename]:
+                        asyncio.ensure_future(utils.load(core, filename), loop=loop)
+                    case _:
+                        print(f"Command not understood: {message}")
 
 
 async def emulator():
