@@ -6,7 +6,7 @@ import os
 import random as rd
 import threading
 import time
-from subprocess import PIPE, Popen  # nosec
+from subprocess import PIPE, STDOUT, Popen  # nosec
 
 import mgba.core
 import mgba.image
@@ -78,11 +78,11 @@ stream = Popen(
         "low_delay",
         "-strict",
         "experimental",
-        # "-loglevel",
-        # "quiet",
         RTMP_STREAM_URI,
     ],
     stdin=PIPE,
+    stdout=PIPE,
+    stderr=STDOUT,
 )
 
 
