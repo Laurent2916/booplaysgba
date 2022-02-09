@@ -30,7 +30,7 @@ logging.getLogger("websockets.server").setLevel(logging.ERROR)
 logging.getLogger("websockets.protocol").setLevel(logging.ERROR)
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-r.mset(KEYS_RESET)
+r.mset(KEYS_RESET)  # type: ignore
 
 USERS: Users = Users()
 
@@ -53,7 +53,7 @@ async def parse_message(user: User, message: websockets.typing.Data) -> None:
         logging.error(f"unsupported action: {message!r} from {user}")
 
 
-async def handler(websocket: websockets.server.WebSocketServerProtocol, path: str):
+async def handler(websocket: websockets.server.WebSocketServerProtocol, path: str) -> None:
     """Handle the messages sent by a user.
 
     Args:
@@ -75,7 +75,7 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
         USERS.unregister(user)
 
 
-async def main():
+async def main() -> None:
     """Start the websocket server."""
     logging.debug("Server started !")
     async with websockets.serve(handler, WEBSOCKET_SERVE, WEBSOCKET_PORT):  # nosec

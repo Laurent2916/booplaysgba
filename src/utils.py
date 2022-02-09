@@ -24,7 +24,7 @@ class User:
         self.websocket = websocket
         self.last_message = time.time()
 
-    async def send(self, data: str):
+    async def send(self, data: str) -> None:
         """Send data through the user's websocket.
 
         Args:
@@ -45,7 +45,7 @@ class User:
 class Users(set):
     """Store `User`s connected to the server."""
 
-    def register(self, user: User):
+    def register(self, user: User) -> None:
         """Register a user in the set.
 
         Args:
@@ -54,7 +54,7 @@ class Users(set):
         self.add(user)
         logging.debug(f"user registered: {user}")
 
-    def unregister(self, user: User):
+    def unregister(self, user: User) -> None:
         """Unregister a user in the set.
 
         Args:
@@ -64,7 +64,7 @@ class Users(set):
         logging.debug(f"user unregistered: {user}")
 
 
-async def save(core: mgba.core.Core):
+async def save(core: mgba.core.Core) -> None:
     state = core.save_raw_state()
     current_time = time.strftime("%Y-%m-%dT%H:%M:%S")
     with open(f"states/{current_time}.state", "wb") as state_file:
@@ -73,7 +73,7 @@ async def save(core: mgba.core.Core):
     logging.debug(f"state saved : {current_time}.state")
 
 
-async def load(core: mgba.core.Core, filename: str):
+async def load(core: mgba.core.Core, filename: str) -> None:
     state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass, TODO: check mGBA sources ?
     with open(f"states/{filename}.state", "rb") as state_file:
         for i in range(len(state)):

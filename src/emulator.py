@@ -39,7 +39,11 @@ screen: mgba.image.Image = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
 core.set_video_buffer(screen)
 core.reset()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)")
+
+# disable all loggers from different files
+logging.getLogger("asyncio").setLevel(logging.ERROR)
+logging.getLogger("asyncio.coroutines").setLevel(logging.ERROR)
 mgba.log.silence()
 
 r: redis.Redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
@@ -82,7 +86,7 @@ stream = Popen(
 )
 
 
-def next_action(core: mgba.core.Core):
+def next_action(core: mgba.core.Core) -> None:
     """Select the next key from the redis database.
 
     Returns:
@@ -98,7 +102,7 @@ def next_action(core: mgba.core.Core):
         core.clear_keys(*KEYS_MGBA)
 
 
-def state_manager(loop: asyncio.AbstractEventLoop):
+def state_manager(loop: asyncio.AbstractEventLoop) -> None:
     """Subscribe and respond to messages received from redis.
 
     Args:
@@ -110,16 +114,16 @@ def state_manager(loop: asyncio.AbstractEventLoop):
     while True:
         for message in ps.listen():
             if message["type"] == "message":
-                match message["data"].decode("utf-8").split(":"):
+                match message["data"].decode("utf-8").split(":", 1):
                     case ["save"]:
                         asyncio.ensure_future(utils.save(core), loop=loop)
                     case ["load", filename]:
                         asyncio.ensure_future(utils.load(core, filename), loop=loop)
                     case _:
-                        print(f"Command not understood: {message}")
+                        logging.debug(f"Command not understood: {message}")
 
 
-async def emulator():
+async def emulator() -> None:
     """Start the main loop responsible for handling inputs and sending images to ffmpeg."""
     while True:
         last_frame_t = time.time()
@@ -141,8 +145,9 @@ async def emulator():
             await asyncio.sleep(sleep_t)
 
 
-async def main():
+async def main() -> None:
     """Start the emulator."""
+    logging.debug("Emulator started !")
     loop = asyncio.get_event_loop()
 
     # setup states in redis

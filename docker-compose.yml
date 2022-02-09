@@ -26,6 +26,7 @@ services:
       - REDIS_PORT=$REDIS_PORT
       - RTMP_HOST=$RTMP_HOST
       - RTMP_PORT=$RTMP_PORT
+      - EMULATOR_RAND_RATE=0.2
     depends_on:
       - rtmp
       - redis
