@@ -78,7 +78,7 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
 async def main() -> None:
     """Start the websocket server."""
     logging.debug("Server started !")
-    async with websockets.serve(handler, WEBSOCKET_SERVE, WEBSOCKET_PORT):  # nosec
+    async with websockets.server.serve(handler, WEBSOCKET_SERVE, WEBSOCKET_PORT):  # nosec
         await asyncio.Future()  # run forever
 
 
