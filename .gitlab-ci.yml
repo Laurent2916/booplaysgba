@@ -1,5 +1,6 @@
 stages:
   - lint
+  - build
 
 pre-commit:
   stage: lint
@@ -9,3 +10,11 @@ pre-commit:
     - pre-commit install
   script:
     - pre-commit run --all-files
+
+docker-compose:
+  stage: build
+  script:
+    - docker build --tag server -f Dockerfile .
+    - docker build --tag emulator -f Dockerfile .
+  only:
+    - master
