@@ -14,6 +14,7 @@ cached-property = "^1.5.2"
 Pillow = "^8.4.0"
 redis = "^3.5.3"
 mgba = { path="mgba/src/platform/python" }
+watchdog = "^2.1.6"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1"

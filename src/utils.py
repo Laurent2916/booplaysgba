@@ -1,12 +1,9 @@
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any
 
-import mgba.core
 import websockets.server
 import websockets.typing
-from mgba._pylib import ffi
 
 
 class User:
@@ -15,11 +12,11 @@ class User:
     websocket: websockets.server.WebSocketServerProtocol
     last_message: float
 
-    def __init__(self, websocket: Any) -> None:
+    def __init__(self, websocket: websockets.server.WebSocketServerProtocol) -> None:
         """Construct a User object.
 
         Args:
-            websocket (Any): the websocket used by the user.
+            websocket (WebSocketServerProtocol): the websocket used by the user.
         """
         self.websocket = websocket
         self.last_message = time.time()
@@ -62,21 +59,3 @@ class Users(set):
         """
         self.remove(user)
         logging.debug(f"user unregistered: {user}")
-
-
-async def save(core: mgba.core.Core) -> None:
-    state = core.save_raw_state()
-    current_time = time.strftime("%Y-%m-%dT%H:%M:%S")
-    with open(f"states/{current_time}.state", "wb") as state_file:
-        for byte in state:
-            state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
-    logging.debug(f"state saved : {current_time}.state")
-
-
-async def load(core: mgba.core.Core, filename: str) -> None:
-    state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass, TODO: check mGBA sources ?
-    with open(f"states/{filename}.state", "rb") as state_file:
-        for i in range(len(state)):
-            state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
-    core.load_raw_state(state)
-    logging.debug(f"state loaded : {filename}")
