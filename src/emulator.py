@@ -41,7 +41,7 @@ core.reset()
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)")
 
-# disable all loggers from different files
+# change log levels for some libs
 logging.getLogger("asyncio").setLevel(logging.ERROR)
 logging.getLogger("asyncio.coroutines").setLevel(logging.ERROR)
 mgba.log.silence()
@@ -49,7 +49,7 @@ mgba.log.silence()
 r: redis.Redis = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
-# Launch ffmpeg process
+# launch ffmpeg process
 stream = Popen(
     [
         "/usr/bin/ffmpeg",

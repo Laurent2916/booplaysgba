@@ -23,7 +23,7 @@ from utils import User, Users
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)")
 
-# disable all loggers from different files
+# change log levels for some libs
 logging.getLogger("asyncio").setLevel(logging.ERROR)
 logging.getLogger("asyncio.coroutines").setLevel(logging.ERROR)
 logging.getLogger("websockets.server").setLevel(logging.ERROR)
@@ -60,11 +60,11 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
         websocket: the websocket used by the user.
         path (str): the path used by the websocket.
     """
-    # Register user
+    # register user
     user = User(websocket)
     USERS.register(user)
 
-    try:  # Manage received messages
+    try:  # manage received messages
         async for message in user.websocket:
             await parse_message(user, message)
     except websockets.exceptions.ConnectionClosed:
@@ -72,7 +72,7 @@ async def handler(websocket: websockets.server.WebSocketServerProtocol, path: st
     except RuntimeError:
         logging.error(f"two coroutines called recv() concurrently, user={user}")
     finally:
-        USERS.unregister(user)
+        USERS.unregister(user)  # unregister user
 
 
 async def main() -> None:
