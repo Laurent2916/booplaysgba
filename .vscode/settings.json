@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": ".venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.formatting.provider": "black",
   "editor.formatOnSave": true,
   "python.linting.enabled": true,
@@ -13,9 +13,6 @@
     }
   },
   "python.analysis.extraPaths": [
-    "./mgba/src/platform/python"
+    "${workspaceFolder}/mgba/src/platform/python",
   ],
-  "conventionalCommits.scopes": [
-    ".vscode"
-  ]
 }
