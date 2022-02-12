@@ -2,16 +2,16 @@ stages:
   - lint
   - build
 
-pre-commit:
-  stage: lint
-  image: python:latest
-  before_script:
-    - pip install pre-commit
-    - pre-commit install
-  script:
-    - pre-commit run --all-files
+# pre-commit:
+#   stage: lint
+#   image: python:latest
+#   before_script:
+#     - pip install pre-commit
+#     - pre-commit install
+#   script:
+#     - pre-commit run --all-files
 
-docker-compose:
+docker:
   stage: build
   script:
     - docker build --tag server -f Dockerfile .
