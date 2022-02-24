@@ -12,18 +12,16 @@ async def save(core: mgba.core.Core) -> None:
     state = core.save_raw_state()
     current_time = time.strftime("%Y-%m-%dT%H:%M:%S")
     with open(f"states/{current_time}.state", "wb") as state_file:
-        for byte in state:
-            state_file.write(byte.to_bytes(4, byteorder="big", signed=False))
+        state_file.write(bytes(state))
     logging.debug(f"state saved : {current_time}.state")
 
 
 async def load(core: mgba.core.Core, filename: str) -> None:
-    state = ffi.new("unsigned char[397312]")  # pulled 397312 straight from my ass, TODO: check mGBA sources ?
+    state = ffi.new("unsigned char[]", core._core.stateSize(core._core))
     with open(f"states/{filename}.state", "rb") as state_file:
-        for i in range(len(state)):
-            state[i] = int.from_bytes(state_file.read(4), byteorder="big", signed=False)
+        state_file.readinto(ffi.buffer(state))
     core.load_raw_state(state)
-    logging.debug(f"state loaded : {filename}")
+    logging.debug(f"state loaded : {filename}.state")
 
 
 class RedisManager(threading.Thread):
