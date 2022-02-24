@@ -4,15 +4,18 @@ import asyncio
 import logging
 import random
 import time
+from math import ceil
 
+import mgba.audio
 import mgba.core
 import mgba.image
 import mgba.log
 import redis
 
-from ffmpeg_manager import ffmpeg_stream
+from ffmpeg_manager import ffmpeg_audio_stream, ffmpeg_video_stream
 from redis_manager import RedisManager
 from settings import (
+    EMULATOR_FPS,
     EMULATOR_HEIGHT,
     EMULATOR_POLLING_RATE,
     EMULATOR_RAND_RATE,
@@ -58,10 +61,14 @@ async def emulator() -> None:
 
         # save frame to PNG image
         image = screen.to_pil().convert("RGB")
-        image.save(ffmpeg_stream.stdin, "PNG")
+        image.save(ffmpeg_video_stream.stdin, "PNG")
 
-        # TODO: get audio
+        n = ceil(96000 / EMULATOR_FPS)
+        audio_buffer = audio_channels.read(n)
 
+        for short in audio_buffer:
+            bidule = short.to_bytes(2, byteorder="little", signed=True)
+            ffmpeg_audio_stream.write(bidule)
         # sleep until next frame, if necessary
         sleep_t = last_frame_t - time.time() + EMULATOR_SPF
         if sleep_t > 0:
@@ -91,6 +98,7 @@ if __name__ == "__main__":
     core: mgba.core.Core = mgba.core.load_path(EMULATOR_ROM_PATH)
     screen: mgba.image.Image = mgba.image.Image(EMULATOR_WIDTH, EMULATOR_HEIGHT)
     core.set_video_buffer(screen)
+    audio_channels: mgba.audio.StereoBuffer = core.get_audio_channels()
     core.reset()
 
     # setup logging format

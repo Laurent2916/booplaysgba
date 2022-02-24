@@ -12,37 +12,100 @@ from settings import (
 )
 
 # launch ffmpeg process
-ffmpeg_stream = subprocess.Popen(
+ffmpeg_video_stream = subprocess.Popen(
     [
-        "/usr/bin/ffmpeg",
-        "-y",
-        "-f",
-        "image2pipe",
-        "-vcodec",
-        "png",
-        "-r",
+        "/usr/bin/ffmpeg",  # ffmpeg binary location
+        "-y",  # overwrite output files without asking
+        "-f",  # force input file format
+        "image2pipe",  # allows to pipe images to ffmpeg
+        "-vcodec",  # set the video codec
+        "png",  # input images are PNGs
+        "-r",  # set input frame rate
         f"{EMULATOR_FPS}",
-        "-s",
+        "-s",  # set input frame size
         f"{EMULATOR_WIDTH}x{EMULATOR_HEIGHT}",
+        "-i",  # input file url
+        "pipe:0",  # use stdin (pipe n°0) for input
+        "-f",  # force input or output file format
+        "flv",  # output an flv video
+        "-s",  # set output frame size
+        f"{FFMPEG_WIDTH}x{FFMPEG_HEIGHT}",
+        "-r",  # set output frame rate
+        f"{FFMPEG_FPS}",
+        "-b:v",  # set video output bitrate
+        FFMPEG_BITRATE,
+        "-fflags",  # set format flags
+        "nobuffer",  # reduce the latency introduced by buffering during initial input streams analysis
+        "-flags",  # set generic flags
+        "low_delay",  # force low delay
+        "-strict",  # specify how strictly to follow the standards
+        "experimental",  # allow non standardized experimental encoders...
+        RTMP_STREAM_URI,  # where to output the video
+    ],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.STDOUT,
+)
+
+ffmpeg_audio_stream = subprocess.Popen(
+    # [
+    #     "/usr/bin/ffmpeg",  # FFMPEG_BIN
+    #     "-i",
+    #     "-",
+    #     "-f",
+    #     "s24le",
+    #     "-acodec",
+    #     "pcm_s24le",
+    #     "-ar",
+    #     "44100",  # ouput will have 44100 Hz
+    #     "-ac",
+    #     "2",  # stereo (set to '1' for mono)
+    #     RTMP_STREAM_URI,
+    # ],
+    # [
+    #     "/usr/bin/ffmpeg",  # FFMPEG_BIN
+    #     "-f",  # audio format
+    #     "s24le",
+    #     "-acodec",  # audio codec
+    #     "pcm_s24le",
+    #     "-ar",  # audio sampling rate
+    #     "44100",
+    #     "-ac",  # number of audio canals
+    #     "2",  # stereo (set to '1' for mono)
+    #     "-i",
+    #     "pipe:",
+    #     "-y",
+    #     "-f",
+    #     "flv",
+    #     # "-tune",
+    #     # "zerolatency",
+    #     "-fflags",  # set format flags
+    #     "nobuffer",  # reduce the latency introduced by buffering during initial input streams analysis
+    #     "-flags",  # set generic flags
+    #     "low_delay",  # force low delay
+    #     "-strict",  # specify how strictly to follow the standards
+    #     "experimental",  # allow non standardized experimental things
+    #     RTMP_STREAM_URI,
+    # ],
+    [
+        "/usr/bin/ffmpeg",  # FFMPEG_BIN
+        "-f",
+        "-y",
+        "s24le",
+        "-acodec",
+        "pcm_s24le",
+        "-ar",
+        "44100",  # ouput will have 44100 Hz
+        "-ac",
+        "2",  # stereo (set to '1' for mono)
         "-i",
         "-",
         "-f",
-        "flv",
-        "-s",
-        f"{FFMPEG_WIDTH}x{FFMPEG_HEIGHT}",
-        "-r",
-        f"{FFMPEG_FPS}",
-        "-b:v",
-        FFMPEG_BITRATE,
-        "-fflags",
-        "nobuffer",
-        "-flags",
-        "low_delay",
-        "-strict",
-        "experimental",
-        RTMP_STREAM_URI,
+        "bonjour",
     ],
     stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
+    # stdout=subprocess.STDOUT,
+    # stderr=subprocess.STDOUT,
 )
+
+# https://stackoverflow.com/questions/67388548/multiple-named-pipes-in-ffmpeg
