@@ -7,11 +7,13 @@ import mgba.core
 import redis
 from mgba._pylib import ffi
 
+from env import EMULATOR_STATES_PATH
+
 
 async def save(core: mgba.core.Core) -> None:
     state = core.save_raw_state()
     current_time = time.strftime("%Y-%m-%dT%H:%M:%S")
-    with open(f"states/{current_time}.state", "wb") as state_file:
+    with open(f"{EMULATOR_STATES_PATH}/{current_time}.state", "wb") as state_file:
         state_file.write(bytes(state))
     logging.debug(f"state saved : {current_time}.state")
 

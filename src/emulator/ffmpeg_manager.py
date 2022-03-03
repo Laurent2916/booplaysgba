@@ -1,6 +1,6 @@
 import subprocess
 
-from settings import (
+from env import (
     EMULATOR_FPS,
     EMULATOR_HEIGHT,
     EMULATOR_WIDTH,

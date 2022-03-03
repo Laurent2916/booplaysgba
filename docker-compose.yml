@@ -2,9 +2,8 @@ version: "3.8"
 services:
   server:
     build:
-      context: .
+      context: src/server/
       dockerfile: Dockerfile
-      target: server
     environment:
       - REDIS_HOST=$REDIS_HOST
       - REDIS_PORT=$REDIS_PORT
@@ -18,21 +17,22 @@ services:
 
   emulator:
     build:
-      context: .
+      context: src/emulator/
       dockerfile: Dockerfile
-      target: emulator
     environment:
       - REDIS_HOST=$REDIS_HOST
       - REDIS_PORT=$REDIS_PORT
       - RTMP_HOST=$RTMP_HOST
       - RTMP_PORT=$RTMP_PORT
       - EMULATOR_RAND_RATE=0.2
+      - EMULATOR_STATES_PATH=$EMULATOR_STATES_PATH
+      - EMULATOR_ROM_PATH=$EMULATOR_ROM_PATH
     depends_on:
       - rtmp
       - redis
     volumes:
-      - ./states/:/code/states/
-      - ./roms/:/code/roms/
+      - ./states/:$EMULATOR_STATES_PATH
+      - ./roms/:/roms/
     restart: unless-stopped
 
   redis:

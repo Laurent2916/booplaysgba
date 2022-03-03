@@ -9,8 +9,9 @@ import websockets
 import websockets.exceptions
 import websockets.server
 import websockets.typing
+from utils import User, Users
 
-from settings import (
+from env import (
     KEYS_ID,
     KEYS_RESET,
     REDIS_HOST,
@@ -19,7 +20,6 @@ from settings import (
     WEBSOCKET_PORT,
     WEBSOCKET_SERVE,
 )
-from utils import User, Users
 
 
 async def parse_message(user: User, message: websockets.typing.Data) -> None:
@@ -40,7 +40,9 @@ async def parse_message(user: User, message: websockets.typing.Data) -> None:
         logging.error(f"unsupported action: {msg} from {user}")
 
 
-async def handler(websocket: websockets.server.WebSocketServerProtocol, path: str) -> None:
+async def handler(
+    websocket: websockets.server.WebSocketServerProtocol, path: str
+) -> None:
     """Handle the messages sent by a user.
 
     Args:
@@ -73,7 +75,9 @@ if __name__ == "__main__":
 
     # setup logging format
     logging.basicConfig(
-        level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)"
+        level=logging.DEBUG,
+        format="%(asctime)s %(name)s %(levelname)-8s  %(message)s",
+        datefmt="(%F %T)",
     )
 
     # change log levels for some libs

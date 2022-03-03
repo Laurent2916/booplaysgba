@@ -5,6 +5,8 @@ import redis
 import watchdog.observers
 from watchdog.events import FileCreatedEvent, FileDeletedEvent, FileSystemEventHandler
 
+from env import EMULATOR_STATES_PATH
+
 
 class StateHandler(FileSystemEventHandler):
     def __init__(self, redis: redis.Redis) -> None:
@@ -39,11 +41,11 @@ class StateManager(watchdog.observers.Observer):
         super().__init__()
 
         # setup states in redis
-        files = os.listdir("./states")
+        files = os.listdir(EMULATOR_STATES_PATH)
         statefiles = list(filter(lambda x: x.endswith(".state"), files))
         states = list(map(lambda x: x.removesuffix(".state"), statefiles))
         redis.sadd("states", *states)
         logging.debug("redis server populated with states")
 
         state_handler = StateHandler(redis)
-        self.schedule(state_handler, "./states", recursive=False)
+        self.schedule(state_handler, EMULATOR_STATES_PATH, recursive=False)

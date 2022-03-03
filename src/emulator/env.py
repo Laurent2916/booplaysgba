@@ -1,10 +1,5 @@
 from os import getenv
 
-WEBSOCKET_HOST: str = getenv("WEBSOCKET_HOST", "localhost")
-WEBSOCKET_PORT: int = int(getenv("WEBSOCKET_PORT", 6789))
-WEBSOCKET_URI: str = f"ws://{WEBSOCKET_HOST}:{WEBSOCKET_PORT}/"
-WEBSOCKET_SERVE: str = getenv("WEBSOCKET_SERVE", "localhost")
-
 RTMP_HOST: str = getenv("RTMP_HOST", "localhost")
 RTMP_PORT: int = int(getenv("RTMP_PORT", 1935))
 RTMP_URI: str = f"rtmp://{RTMP_HOST}:{RTMP_PORT}/"
@@ -22,16 +17,13 @@ EMULATOR_SPF: float = 1.0 / EMULATOR_FPS
 EMULATOR_INPUT_HZ: int = int(getenv("EMULATOR_INPUT_HZ", 10))
 EMULATOR_POLLING_RATE: int = EMULATOR_FPS // EMULATOR_INPUT_HZ
 EMULATOR_ROM_PATH: str = getenv("EMULATOR_ROM_PATH", "roms/pokemon.gba")
+EMULATOR_STATES_PATH: str = getenv("EMULATOR_STATES_PATH", "states/")
 EMULATOR_RAND_RATE: float = float(getenv("EMULATOR_RAND_RATE", 0.0))
 
 FFMPEG_WIDTH: int = int(getenv("FFMPEG_WIDTH", EMULATOR_WIDTH))
 FFMPEG_HEIGHT: int = int(getenv("FFMPEG_HEIGHT", EMULATOR_HEIGHT))
 FFMPEG_FPS: int = int(getenv("FFMPEG_FPS", 30))
 FFMPEG_BITRATE: str = getenv("FFMPEG_BIRATE", "2M")
-
-PASSWORD_ADMIN: str = getenv("PASSWORD_ADMIN", "password_admin")
-
-USER_TIMEOUT: float = float(getenv("USER_TIMEOUT", 0.5))
 
 KEYMAP: dict[str, int] = {
     "a": 0,
@@ -47,4 +39,4 @@ KEYMAP: dict[str, int] = {
 }
 KEYS_ID: tuple[str, ...] = tuple(KEYMAP.keys())
 KEYS_MGBA: tuple[int, ...] = tuple(KEYMAP.values())
-KEYS_RESET: dict[str, int] = dict([(x, 0) for x in KEYS_ID])
+KEYS_RESET: dict[str, int] = {x: 0 for x in KEYS_ID}

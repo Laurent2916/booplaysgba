@@ -10,9 +10,7 @@ import mgba.image
 import mgba.log
 import redis
 
-from ffmpeg_manager import ffmpeg_stream
-from redis_manager import RedisManager
-from settings import (
+from env import (
     EMULATOR_HEIGHT,
     EMULATOR_POLLING_RATE,
     EMULATOR_RAND_RATE,
@@ -25,6 +23,8 @@ from settings import (
     REDIS_HOST,
     REDIS_PORT,
 )
+from ffmpeg_manager import ffmpeg_stream
+from redis_manager import RedisManager
 from state_manager import StateManager
 
 
@@ -95,7 +95,9 @@ if __name__ == "__main__":
 
     # setup logging format
     logging.basicConfig(
-        level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)-8s  %(message)s", datefmt="(%F %T)"
+        level=logging.DEBUG,
+        format="%(asctime)s %(name)s %(levelname)-8s  %(message)s",
+        datefmt="(%F %T)",
     )
 
     # change log levels for some libs

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "booplaysgba"
+name = "booplaysgba_emulator"
 version = "0.1.0"
 description = "Émulateur collaboratif pour patienter dans le B00"
 authors = ["Laureηt <laurentfainsin@protonmail.com>"]
@@ -8,12 +8,11 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.10"
 asyncio = "^3.4.3"
-websockets = "^10.1"
 cffi = "^1.15.0"
 cached-property = "^1.5.2"
 Pillow = "^8.4.0"
 redis = "^3.5.3"
-mgba = { path="mgba/src/platform/python" }
+mgba = { path="../mgba/src/platform/python" }
 watchdog = "^2.1.6"
 
 [tool.poetry.dev-dependencies]

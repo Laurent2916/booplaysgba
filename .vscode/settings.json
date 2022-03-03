@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // "python.defaultInterpreterPath": "${workspaceFolder}/src/server/.venv/bin/python",
   "python.formatting.provider": "black",
   "editor.formatOnSave": true,
   "python.linting.enabled": true,
@@ -14,5 +14,6 @@
   },
   "python.analysis.extraPaths": [
     "${workspaceFolder}/mgba/src/platform/python",
+    "./src/mgba/src/platform/python"
   ],
 }
