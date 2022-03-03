@@ -2,14 +2,56 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Redis server",
-      "command": "redis-server",
-      "type": "process",
-      "isBackground": true,
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "silent"
-      },
+      "label": "Start NGINX",
+      "type": "docker-run",
+      "dockerRun": {
+        "containerName": "nginx-rtmp",
+        "image": "tiangolo/nginx-rtmp",
+        "ports": [
+          {
+            "containerPort": 1935,
+            "hostPort": 1935
+          }
+        ],
+        "remove": true
+      }
+    },
+    {
+      "label": "Start Redis",
+      "type": "docker-run",
+      "dockerRun": {
+        "containerName": "redis",
+        "image": "redis:alpine",
+        "ports": [
+          {
+            "containerPort": 6379,
+            "hostPort": 6379
+          }
+        ],
+        "remove": true
+      }
+    },
+    {
+      "label": "Start NGINX+Redis",
+      "dependsOn": [
+        "Start NGINX",
+        "Start Redis"
+      ]
+    },
+    {
+      "label": "Stop NGINX",
+      "type": "shell",
+      "command": "docker stop nginx-rtmp"
+    },
+    {
+      "label": "Stop NGINX",
+      "type": "shell",
+      "command": "docker stop redis"
+    },
+    {
+      "label": "Stop NGINX+Redis",
+      "type": "shell",
+      "command": "docker stop redis nginx-rtmp"
     }
   ]
 }

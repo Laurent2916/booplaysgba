@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "src/emulator"
+		},
+		{
+			"path": "src/server"
+		},
+		{
+			"path": "."
+		}
+	]
+}

@@ -12,7 +12,6 @@ cffi = "^1.15.0"
 cached-property = "^1.5.2"
 Pillow = "^8.4.0"
 redis = "^3.5.3"
-mgba = { path="../mgba/src/platform/python" }
 watchdog = "^2.1.6"
 
 [tool.poetry.dev-dependencies]
@@ -24,6 +23,7 @@ bandit = "^1.7.0"
 isort = "^5.9.3"
 mypy = "^0.931"
 types-redis = "^3.5.15"
+mgba = { path="../mgba/src/platform/python" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

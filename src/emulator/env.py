@@ -16,8 +16,8 @@ EMULATOR_FPS: int = int(getenv("EMULATOR_FPS", 60))
 EMULATOR_SPF: float = 1.0 / EMULATOR_FPS
 EMULATOR_INPUT_HZ: int = int(getenv("EMULATOR_INPUT_HZ", 10))
 EMULATOR_POLLING_RATE: int = EMULATOR_FPS // EMULATOR_INPUT_HZ
-EMULATOR_ROM_PATH: str = getenv("EMULATOR_ROM_PATH", "roms/pokemon.gba")
-EMULATOR_STATES_PATH: str = getenv("EMULATOR_STATES_PATH", "states/")
+EMULATOR_ROM_PATH: str = getenv("EMULATOR_ROM_PATH", "../../roms/pokemon.gba")
+EMULATOR_STATES_PATH: str = getenv("EMULATOR_STATES_PATH", "../../states/")
 EMULATOR_RAND_RATE: float = float(getenv("EMULATOR_RAND_RATE", 0.0))
 
 FFMPEG_WIDTH: int = int(getenv("FFMPEG_WIDTH", EMULATOR_WIDTH))

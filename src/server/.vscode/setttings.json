@@ -10,8 +10,5 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
     }
-  },
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/src/mgba/src/platform/python",
-  ],
+  }
 }
