@@ -9,14 +9,13 @@ RUN apk update
 RUN apk add --no-cache build-base cmake git
 # mgba dependencies
 RUN apk add --no-cache libffi-dev ffmpeg ffmpeg-dev libpng-dev jpeg-dev
-RUN pip install cffi
+RUN pip install --user cffi
 
 # clone mgba
 RUN git clone https://github.com/mgba-emu/mgba.git
 # create build directory
 WORKDIR /src/mgba/build/
 # configure the build
-
 RUN cmake \
     -DBUILD_PYTHON=ON \
     -DBUILD_QT=OFF \
@@ -42,7 +41,7 @@ RUN cmake \
     ..
 # build mGBA
 RUN make
-# install mGBA, TODO: is install needed ?
+# install mGBA
 RUN make install
 
 WORKDIR /src
@@ -51,13 +50,20 @@ RUN pip install --upgrade pip
 # copy requirements.txt for installation
 COPY requirements.txt /src/
 # install python dependencies
-RUN pip install -r /src/requirements.txt
-# remove requirements.txt
-RUN rm /src/requirements.txt
+RUN pip install --user -r /src/requirements.txt
 
-# install mGBA bindings, TODO: can delete everything else ?
+# install mGBA bindings
 WORKDIR /src/mgba/src/platform/python
-RUN BINDIR=/src/mgba/build/include LIBDIR=/src/mgba/build/include python setup.py install
+RUN BINDIR=/src/mgba/build/include LIBDIR=/src/mgba/build/include python setup.py install --user
+
+FROM python:alpine
+
+# install required libraries
+RUN apk add --no-cache ffmpeg
+
+# copy necessary mgba files
+COPY --from=base /root/.local /root/.local
+COPY --from=base /usr/local/lib/libmgba.so* /usr/local/lib/
 
 # copy the src files
 WORKDIR /src
