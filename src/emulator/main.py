@@ -8,8 +8,8 @@ import time
 import mgba.core
 import mgba.image
 import mgba.log
-import redis
 
+import redis
 from env import (
     EMULATOR_HEIGHT,
     EMULATOR_POLLING_RATE,
@@ -23,9 +23,9 @@ from env import (
     REDIS_HOST,
     REDIS_PORT,
 )
-from ffmpeg_manager import ffmpeg_stream
-from redis_manager import RedisManager
-from state_manager import StateManager
+from ffmpeg import ffmpeg_stream
+from redis import RedisManager
+from states import StateManager
 
 
 def next_action(core: mgba.core.Core) -> None:

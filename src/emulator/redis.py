@@ -4,9 +4,9 @@ import threading
 import time
 
 import mgba.core
-import redis
 from mgba._pylib import ffi
 
+import redis
 from env import EMULATOR_STATES_PATH
 
 

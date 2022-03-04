@@ -1,10 +1,10 @@
 import logging
 import os
 
-import redis
 import watchdog.observers
 from watchdog.events import FileCreatedEvent, FileDeletedEvent, FileSystemEventHandler
 
+import redis
 from env import EMULATOR_STATES_PATH
 
 
