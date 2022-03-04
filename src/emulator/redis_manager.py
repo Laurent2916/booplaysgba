@@ -20,7 +20,7 @@ async def save(core: mgba.core.Core) -> None:
 
 async def load(core: mgba.core.Core, filename: str) -> None:
     state = ffi.new("unsigned char[]", core._core.stateSize(core._core))
-    with open(f"states/{filename}.state", "rb") as state_file:
+    with open(f"{EMULATOR_STATES_PATH}/{filename}.state", "rb") as state_file:
         state_file.readinto(ffi.buffer(state))
     core.load_raw_state(state)
     logging.debug(f"state loaded : {filename}.state")
