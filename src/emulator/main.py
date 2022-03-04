@@ -24,7 +24,7 @@ from env import (
     REDIS_PORT,
 )
 from ffmpeg import ffmpeg_stream
-from redis import RedisManager
+from redis_manager import RedisManager
 from states import StateManager
 
 

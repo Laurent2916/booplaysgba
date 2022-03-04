@@ -31,7 +31,6 @@ B00 plays GBA is an interactive emulator made to entertain people during waiting
 - [Remote container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
 - [Kubernetes](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 
 
