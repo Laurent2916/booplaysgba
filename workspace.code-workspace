@@ -1,13 +1,16 @@
 {
-	"folders": [
-		{
-			"path": "src/emulator"
-		},
-		{
-			"path": "src/server"
-		},
-		{
-			"path": "."
-		}
-	]
+    "folders": [
+        {
+            "path": "src/emulator",
+            "name": "Emulator"
+        },
+        {
+            "path": "src/server",
+            "name": "Server"
+        },
+        {
+            "path": ".",
+            "name": "B00 Plays GBA"
+        }
+    ]
 }
