@@ -14,7 +14,8 @@
           }
         ],
         "remove": true
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Start Redis",
@@ -29,29 +30,40 @@
           }
         ],
         "remove": true
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Start NGINX+Redis",
       "dependsOn": [
         "Start NGINX",
         "Start Redis"
-      ]
+      ],
+      "problemMatcher": []
     },
     {
       "label": "Stop NGINX",
       "type": "shell",
-      "command": "docker stop nginx-rtmp"
+      "command": "docker stop nginx-rtmp",
+      "problemMatcher": []
     },
     {
       "label": "Stop NGINX",
       "type": "shell",
-      "command": "docker stop redis"
+      "command": "docker stop redis",
+      "problemMatcher": []
     },
     {
       "label": "Stop NGINX+Redis",
       "type": "shell",
-      "command": "docker stop redis nginx-rtmp"
+      "command": "docker stop redis nginx-rtmp",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build mGBA",
+      "type": "shell",
+      "command": "mkdir src/mgba/build; cd src/mgba/build && cmake -DBUILD_PYTHON=ON -DBUILD_QT=OFF -DBUILD_SDL=OFF -DUSE_DISCORD_RPC=OFF . && make",
+      "problemMatcher": []
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate requirements.txt",
+      "type": "shell",
+      "command": "$HOME/.local/bin/poetry export --format requirements.txt --output requirements.txt --without-hashes && sed -i '/mgba/d' requirements.txt",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poetry install",
+      "type": "shell",
+      "command": "BINDIR=../mgba/build/ LIBDIR=../mgba/build/ $HOME/.local/bin/poetry install",
+      "problemMatcher": []
+    }
+  ]
+}

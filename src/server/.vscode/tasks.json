@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate requirements.txt",
+      "type": "shell",
+      "command": "$HOME/.local/bin/poetry export --format requirements.txt --output requirements.txt --without-hashes",
+      "problemMatcher": []
+    },
+    {
+      "label": "Poetry install",
+      "type": "shell",
+      "command": "$HOME/.local/bin/poetry install",
+      "problemMatcher": []
+    }
+  ]
+}
